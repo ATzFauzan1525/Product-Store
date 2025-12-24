@@ -54,7 +54,6 @@ export default function Navbar() {
                   }
                   after:absolute after:left-1/2 after:-bottom-2 after:h-1 after:w-0
                   after:-translate-x-1/2 after:rounded-full
-                  after:rounded-full
                   after:bg-gradient-to-r after:from-blue-500 after:to-cyan-400
                   after:transition-all after:duration-300
                   ${isActive ? "after:w-8" : "hover:after:w-8"}
