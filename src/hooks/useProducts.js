@@ -19,8 +19,6 @@ export function useProducts() {
   };
 
   // ✨ FUNGSI UPDATE PRODUK (BARU)
-  // Menerima produk yang sudah diupdate
-  // Mencari produk dengan ID yang sama dan replace dengan data baru
   const updateProduct = (updatedProduct) => {
     setProducts(products.map(p => 
       p.id === updatedProduct.id ? updatedProduct : p
