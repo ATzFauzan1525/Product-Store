@@ -3,7 +3,7 @@ import { Sparkles, TrendingUp, Star, X } from 'lucide-react';
 import Navbar from '../components/public/Navbar';
 import ProductCard from '../components/public/ProductCard';
 import Footer from '../components/public/Footer';
-import SearchBar from '../components/public/SearchBar';
+import FilterBar from '../components/public/FilterBar';
 import FilterModal from '../components/public/FilterModal';
 import { useProducts } from '../hooks/useProducts';
 
@@ -112,7 +112,7 @@ export default function UserPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50">
-      <Navbar />
+      <Navbar searchQuery={searchQuery} onSearch={handleSearch} />
       
      {/* Hero Section */}
 <div className="relative overflow-hidden bg-gradient-to-r from-blue-600 to-indigo-700">
@@ -179,10 +179,8 @@ export default function UserPage() {
 </div>
 
       
-      {/* Search & Filter Bar */}
-      <SearchBar 
-        searchQuery={searchQuery}
-        onSearch={handleSearch}
+      {/* Filter Bar */}
+      <FilterBar 
         onFilterClick={() => setIsFilterOpen(true)}
         viewMode={viewMode}
         onViewModeChange={setViewMode}
