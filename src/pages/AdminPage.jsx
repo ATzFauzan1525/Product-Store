@@ -7,7 +7,7 @@ import DataTable from '../components/admin/DataTable';
 export default function AdminPage() {
   
   // STATE PRODUCTS - menggunakan hook untuk mendapatkan data dari localStorage
-  const { products, addProduct, deleteProduct } = useProducts();
+  const { products, addProduct, deleteProduct, updateProduct } = useProducts();
 
   // FUNGSI TAMBAH PRODUK
   // Dipanggil dari FormData saat user submit form
@@ -23,6 +23,14 @@ export default function AdminPage() {
     console.log('Menghapus produk dengan ID:', id);
     deleteProduct(id);
     alert('Produk berhasil dihapus!');
+  };
+
+  // ✨ FUNGSI EDIT PRODUK (BARU)
+  // Dipanggil dari DataTable saat user submit form edit
+  const handleEditProduct = (updatedProduct) => {
+    console.log('Mengupdate produk:', updatedProduct);
+    updateProduct(updatedProduct);
+    alert('Produk berhasil diupdate!');
   };
 
   return (
@@ -76,8 +84,13 @@ export default function AdminPage() {
         
         {/* TABEL PRODUK 
             Props products = array semua produk untuk ditampilkan
-            Props onDelete = fungsi untuk menghapus produk */}
-        <DataTable products={products} onDelete={handleDelete} />
+            Props onDelete = fungsi untuk menghapus produk
+            Props onEdit = fungsi untuk edit produk (BARU) */}
+        <DataTable 
+          products={products} 
+          onDelete={handleDelete}
+          onEdit={handleEditProduct}
+        />
       </div>
     </div>
   );
