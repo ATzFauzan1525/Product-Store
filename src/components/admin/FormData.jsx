@@ -7,6 +7,7 @@ import { PlusCircle, Package, DollarSign, Box, Tag, Image } from 'lucide-react';
 
 // Props: onAddProduct = fungsi dari parent (AdminPage) untuk menambah produk
 export default function FormData({ onAddProduct }) {
+  const [isSubmitting, setIsSubmitting] = useState(false);
   
   // STATE FORM - menyimpan data yang user ketik di form
   const [formData, setFormData] = useState({
@@ -18,30 +19,40 @@ export default function FormData({ onAddProduct }) {
   });
 
   // FUNGSI SUBMIT - dipanggil saat tombol "Tambah Produk" diklik
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault(); // Mencegah reload halaman
     
-    // Buat objek produk baru dari data form
-    const newProduct = {
-      name: formData.name,
-      price: Number(formData.price),        // Ubah string jadi number
-      category: formData.category,
-      stock: Number(formData.stock),        // Ubah string jadi number
-      image: formData.image || 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=400' // Pakai gambar default jika kosong
-    };
+    // Set loading state
+    setIsSubmitting(true);
     
-    // Kirim produk baru ke parent component (AdminPage)
-    onAddProduct(newProduct);
-    console.log('Product added:', newProduct);
-    
-    // RESET FORM - kosongkan semua input setelah submit
-    setFormData({
-      name: '',
-      price: '',
-      category: '',
-      stock: '',
-      image: ''
-    });
+    try {
+      // Buat objek produk baru dari data form
+      const newProduct = {
+        name: formData.name,
+        price: Number(formData.price),        // Ubah string jadi number
+        category: formData.category,
+        stock: Number(formData.stock),        // Ubah string jadi number
+        image: formData.image || 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=400' // Pakai gambar default jika kosong
+      };
+      
+      // Kirim produk baru ke parent component (AdminPage)
+      await onAddProduct(newProduct);
+      console.log('Product added:', newProduct);
+      
+      // RESET FORM - kosongkan semua input setelah submit berhasil
+      setFormData({
+        name: '',
+        price: '',
+        category: '',
+        stock: '',
+        image: ''
+      });
+    } catch (error) {
+      console.error('Error adding product:', error);
+      // Error handling is done in parent component
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   // FUNGSI HANDLE CHANGE - dipanggil setiap kali user mengetik di input
@@ -178,10 +189,24 @@ export default function FormData({ onAddProduct }) {
         {/* TOMBOL SUBMIT - mengirim form */}
         <button
           onClick={handleSubmit}
-          className="w-full bg-gradient-to-r from-blue-800 via-blue-600 to-blue-400 text-white py-4 rounded-xl hover:from-blue-900 hover:via-blue-700 hover:to-blue-500 transition-all duration-200 font-bold text-lg shadow-lg hover:shadow-xl transform hover:scale-[1.02] flex items-center justify-center gap-2"
+          disabled={isSubmitting}
+          className={`w-full text-white py-4 rounded-xl transition-all duration-200 font-bold text-lg shadow-lg hover:shadow-xl transform hover:scale-[1.02] flex items-center justify-center gap-2 ${
+            isSubmitting 
+              ? 'bg-gray-400 cursor-not-allowed' 
+              : 'bg-gradient-to-r from-blue-800 via-blue-600 to-blue-400 hover:from-blue-900 hover:via-blue-700 hover:to-blue-500'
+          }`}
         >
-          <PlusCircle className="w-5 h-5" />
-          Tambah Produk
+          {isSubmitting ? (
+            <>
+              <div className="animate-spin rounded-full h-5 w-5 border-2 border-white border-t-transparent"></div>
+              Menambah Produk...
+            </>
+          ) : (
+            <>
+              <PlusCircle className="w-5 h-5" />
+              Tambah Produk
+            </>
+          )}
         </button>
       </div>
     </div>

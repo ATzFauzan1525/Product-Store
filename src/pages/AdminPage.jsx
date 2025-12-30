@@ -6,32 +6,85 @@ import DataTable from '../components/admin/DataTable';
 
 export default function AdminPage() {
   
-  // STATE PRODUCTS - menggunakan hook untuk mendapatkan data dari localStorage
-  const { products, addProduct, deleteProduct, updateProduct } = useProducts();
+  // STATE PRODUCTS - menggunakan hook untuk mendapatkan data dari API dengan loading dan error states
+  const { products, loading, error, addProduct, deleteProduct, updateProduct, refreshProducts } = useProducts();
 
-  // FUNGSI TAMBAH PRODUK
+  // FUNGSI TAMBAH PRODUK via API
   // Dipanggil dari FormData saat user submit form
-  const handleAddProduct = (newProduct) => {
-    console.log('Menambah produk baru:', newProduct);
-    addProduct(newProduct);
-    alert('Produk berhasil ditambahkan!');
+  const handleAddProduct = async (newProduct) => {
+    try {
+      console.log('Menambah produk baru:', newProduct);
+      await addProduct(newProduct);
+      alert('Produk berhasil ditambahkan!');
+    } catch (err) {
+      console.error('Error adding product:', err);
+      alert(`Gagal menambahkan produk: ${err.message}`);
+    }
   };
 
-  // FUNGSI HAPUS PRODUK
+  // FUNGSI HAPUS PRODUK via API
   // Dipanggil dari DataTable saat user klik tombol Hapus
-  const handleDelete = (id) => {
-    console.log('Menghapus produk dengan ID:', id);
-    deleteProduct(id);
-    alert('Produk berhasil dihapus!');
+  const handleDelete = async (id) => {
+    try {
+      if (window.confirm('Apakah Anda yakin ingin menghapus produk ini?')) {
+        console.log('Menghapus produk dengan ID:', id);
+        await deleteProduct(id);
+        alert('Produk berhasil dihapus!');
+      }
+    } catch (err) {
+      console.error('Error deleting product:', err);
+      alert(`Gagal menghapus produk: ${err.message}`);
+    }
   };
 
-  // ✨ FUNGSI EDIT PRODUK (BARU)
+  // ✨ FUNGSI EDIT PRODUK via API
   // Dipanggil dari DataTable saat user submit form edit
-  const handleEditProduct = (updatedProduct) => {
-    console.log('Mengupdate produk:', updatedProduct);
-    updateProduct(updatedProduct);
-    alert('Produk berhasil diupdate!');
+  const handleEditProduct = async (updatedProduct) => {
+    try {
+      console.log('Mengupdate produk:', updatedProduct);
+      await updateProduct(updatedProduct);
+      alert('Produk berhasil diupdate!');
+    } catch (err) {
+      console.error('Error updating product:', err);
+      alert(`Gagal mengupdate produk: ${err.message}`);
+    }
   };
+
+  // Show loading state
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gray-100">
+        <Navbar />
+        <div className="container mx-auto px-4 py-8 flex items-center justify-center">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-16 w-16 border-4 border-blue-600 border-t-transparent mx-auto mb-4"></div>
+            <p className="text-gray-600 font-medium">Memuat data produk...</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Show error state
+  if (error) {
+    return (
+      <div className="min-h-screen bg-gray-100">
+        <Navbar />
+        <div className="container mx-auto px-4 py-8">
+          <div className="bg-red-50 border border-red-200 rounded-lg p-6 mb-6">
+            <h3 className="text-red-800 font-semibold mb-2">Terjadi Kesalahan</h3>
+            <p className="text-red-600 mb-4">{error}</p>
+            <button
+              onClick={refreshProducts}
+              className="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition-colors"
+            >
+              Coba Lagi
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     // CONTAINER HALAMAN dengan background abu-abu
