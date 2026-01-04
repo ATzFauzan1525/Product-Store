@@ -97,19 +97,15 @@ export default function FilterModal({
                     Harga Minimum
                   </label>
                   <input
-                    type="range"
+                    type="number"
                     min="0"
                     max="50000000"
                     step="1000000"
                     value={tempPriceRange[0]}
-                    onChange={(e) => setTempPriceRange([parseInt(e.target.value), tempPriceRange[1]])}
-                    className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer"
+                    onChange={(e) => setTempPriceRange([parseInt(e.target.value) || 0, tempPriceRange[1]])}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    placeholder="Masukkan harga minimum"
                   />
-                  <div className="mt-2 text-center">
-                    <span className="text-lg font-bold text-blue-600">
-                      {formatPrice(tempPriceRange[0])}
-                    </span>
-                  </div>
                 </div>
 
                 {/* Max Price */}
@@ -118,19 +114,15 @@ export default function FilterModal({
                     Harga Maksimum
                   </label>
                   <input
-                    type="range"
+                    type="number"
                     min="0"
                     max="50000000"
                     step="1000000"
                     value={tempPriceRange[1]}
-                    onChange={(e) => setTempPriceRange([tempPriceRange[0], parseInt(e.target.value)])}
-                    className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer"
+                    onChange={(e) => setTempPriceRange([tempPriceRange[0], parseInt(e.target.value) || 0])}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    placeholder="Masukkan harga maksimum"
                   />
-                  <div className="mt-2 text-center">
-                    <span className="text-lg font-bold text-blue-600">
-                      {formatPrice(tempPriceRange[1])}
-                    </span>
-                  </div>
                 </div>
 
                 {/* Price Range Display */}
@@ -163,25 +155,7 @@ export default function FilterModal({
       </div>
 
       <style jsx>{`
-        input[type='range']::-webkit-slider-thumb {
-          appearance: none;
-          width: 20px;
-          height: 20px;
-          background: linear-gradient(135deg, #3b82f6 0%, #6366f1 100%);
-          cursor: pointer;
-          border-radius: 50%;
-          box-shadow: 0 2px 8px rgba(59, 130, 246, 0.4);
-        }
-
-        input[type='range']::-moz-range-thumb {
-          width: 20px;
-          height: 20px;
-          background: linear-gradient(135deg, #3b82f6 0%, #6366f1 100%);
-          cursor: pointer;
-          border-radius: 50%;
-          border: none;
-          box-shadow: 0 2px 8px rgba(59, 130, 246, 0.4);
-        }
+        
       `}</style>
     </>
   );
