@@ -1,4 +1,3 @@
-// API Service for MockAPI integration
 const BASE_URL = 'https://695249863b3c518fca12168f.mockapi.io/products';
 
 class ApiError extends Error {
@@ -75,6 +74,7 @@ export const formatProductFromApi = (product) => ({
   description: product.description,
   image: product.image,
   isAvailable: product.isAvailable,
+  stock: product.stock || Math.floor(Math.random() * 50) + 1, // Default stock if not provided
 });
 
 // From UI → API
@@ -85,6 +85,7 @@ export const formatProductForApi = (product) => ({
   description: product.description,
   image: product.image,
   isAvailable: product.isAvailable,
+  stock: product.stock,
 });
 
 export { ApiError };
