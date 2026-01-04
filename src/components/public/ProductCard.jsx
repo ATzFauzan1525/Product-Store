@@ -1,5 +1,8 @@
 import { ShoppingCart, Package, Tag, Eye } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { Card, CardContent } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
 
 export default function ProductCard({ product, onBuy }) {
   const navigate = useNavigate();
@@ -34,11 +37,11 @@ Bisa tolong info lebih lanjut?`;
   };
 
   const handleViewDetails = (product) => {
-    navigate(`/product/${product.id}`);
+    navigate(`/detail-produk/${product.id}`);
   };
 
   return (
-    <div className="group bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-2xl transition-all duration-300 border border-gray-100">
+    <Card className="group overflow-hidden hover:shadow-2xl transition-all duration-300">
       {/* Image Container with Overlay */}
       <div className="relative overflow-hidden cursor-pointer" onClick={() => handleViewDetails(product)}>
         <img 
@@ -64,18 +67,18 @@ Bisa tolong info lebih lanjut?`;
         
         {/* Category Badge */}
         <div className="absolute top-4 left-4">
-          <div className="flex items-center gap-1.5 bg-white/95 backdrop-blur-sm px-3 py-1.5 rounded-full shadow-lg">
+          <Badge variant="secondary" className="flex items-center gap-1.5 bg-white/95 backdrop-blur-sm shadow-lg">
             <Tag className="w-3.5 h-3.5 text-blue-600" />
             <span className="text-xs font-semibold text-gray-700">{product.category}</span>
-          </div>
+          </Badge>
         </div>
 
         {/* Stock Badge */}
         <div className="absolute top-4 right-4">
-          <div className="flex items-center gap-1.5 bg-white/95 backdrop-blur-sm px-3 py-1.5 rounded-full shadow-lg">
+          <Badge variant="secondary" className="flex items-center gap-1.5 bg-white/95 backdrop-blur-sm shadow-lg">
             <Package className="w-3.5 h-3.5 text-green-600" />
             <span className="text-xs font-semibold text-gray-700">{product.stock}</span>
-          </div>
+          </Badge>
         </div>
       </div>
 
@@ -101,13 +104,13 @@ Bisa tolong info lebih lanjut?`;
         {/* Action Buttons */}
         <div className="flex gap-3">
           {/* Buy Button */}
-          <button
+          <Button
             onClick={() => handleWhatsAppCheckout(product)}
             className="flex-1 bg-gradient-to-r from-green-600 to-green-700 text-white py-3.5 rounded-xl hover:from-green-700 hover:to-green-800 transition-all duration-300 font-semibold shadow-lg shadow-green-500/30 hover:shadow-xl hover:shadow-green-500/40 flex items-center justify-center gap-2 group/button"
           >
             <ShoppingCart className="w-5 h-5 transition-transform group-hover/button:scale-110" />
             <span>Beli via WA</span>
-          </button>
+          </Button>
           
           {/* Detail Button */}
           <button
@@ -119,6 +122,6 @@ Bisa tolong info lebih lanjut?`;
           </button>
         </div>
       </div>
-    </div>
+    </Card>
   );
 }
