@@ -4,6 +4,8 @@
 
 import { useState } from 'react';
 import { PlusCircle, Package, DollarSign, Box, Tag, Image } from 'lucide-react';
+import { Input } from "../ui/input";
+import { Button } from "../ui/button";
 
 // Props: onAddProduct = fungsi dari parent (AdminPage) untuk menambah produk
 export default function FormData({ onAddProduct }) {
@@ -90,13 +92,12 @@ export default function FormData({ onAddProduct }) {
             <Package className="w-4 h-4 text-indigo-600" />
             Nama Produk
           </label>
-          <input
+          <Input
             type="text"
             name="name"                    // name harus sama dengan key di state
             value={formData.name}          // value diambil dari state
             onChange={handleChange}        // update state saat user ketik
             required                       // wajib diisi
-            className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all duration-200 hover:border-gray-300"
             placeholder="Masukkan nama produk"
           />
         </div>
@@ -112,15 +113,15 @@ export default function FormData({ onAddProduct }) {
             </label>
             <div className="relative">
               {/* Label "Rp" di dalam input sebelah kiri */}
-              <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 font-semibold">Rp</span>
-              <input
+              <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 font-semibold z-10">Rp</span>
+              <Input
                 type="number"
                 name="price"
                 value={formData.price}
                 onChange={handleChange}
                 required
                 min="0"                     // harga minimal 0
-                className="w-full pl-12 pr-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-all duration-200 hover:border-gray-300"
+                className="pl-12"
                 placeholder="0"
               />
             </div>
@@ -133,14 +134,14 @@ export default function FormData({ onAddProduct }) {
               Stok
             </label>
             <div className="relative">
-              <input
+              <Input
                 type="number"
                 name="stock"
                 value={formData.stock}
                 onChange={handleChange}
                 required
                 min="0"                     // stok minimal 0
-                className="w-full px-4 pr-16 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 hover:border-gray-300"
+                className="pr-16"
                 placeholder="0"
               />
               {/* Label "unit" di dalam input sebelah kanan */}
@@ -176,25 +177,20 @@ export default function FormData({ onAddProduct }) {
             <Image className="w-4 h-4 text-pink-600" />
             URL Gambar <span className="text-gray-400 font-normal">(opsional)</span>
           </label>
-          <input
+          <Input
             type="url"
             name="image"
             value={formData.image}
             onChange={handleChange}
-            className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-pink-500 focus:border-pink-500 transition-all duration-200 hover:border-gray-300"
             placeholder="https://example.com/image.jpg"
           />
         </div>
 
         {/* TOMBOL SUBMIT - mengirim form */}
-        <button
+        <Button
           onClick={handleSubmit}
           disabled={isSubmitting}
-          className={`w-full text-white py-4 rounded-xl transition-all duration-200 font-bold text-lg shadow-lg hover:shadow-xl transform hover:scale-[1.02] flex items-center justify-center gap-2 ${
-            isSubmitting 
-              ? 'bg-gray-400 cursor-not-allowed' 
-              : 'bg-gradient-to-r from-blue-800 via-blue-600 to-blue-400 hover:from-blue-900 hover:via-blue-700 hover:to-blue-500'
-          }`}
+          className="w-full text-white py-4 rounded-xl transition-all duration-200 font-bold text-lg shadow-lg hover:shadow-xl transform hover:scale-[1.02] flex items-center justify-center gap-2"
         >
           {isSubmitting ? (
             <>
@@ -207,7 +203,7 @@ export default function FormData({ onAddProduct }) {
               Tambah Produk
             </>
           )}
-        </button>
+        </Button>
       </div>
     </div>
   );

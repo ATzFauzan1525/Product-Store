@@ -1,4 +1,5 @@
 import { useProducts } from '../hooks/useProducts';
+import { useState, useEffect } from 'react';
 import Navbar from '../components/public/Navbar';
 import AdminHeader from '../components/admin/AdminHeader';
 import FormData from '../components/admin/FormData';
@@ -7,7 +8,21 @@ import DataTable from '../components/admin/DataTable';
 export default function AdminPage() {
   
   // STATE PRODUCTS - menggunakan hook untuk mendapatkan data dari API dengan loading dan error states
-  const { products, loading, error, addProduct, deleteProduct, updateProduct, refreshProducts } = useProducts();
+  const { products, loading, error, addProduct, deleteProduct, refreshProducts } = useProducts();
+
+  // STATE untuk cache total stok dan nilai inventori (tidak berubah saat edit)
+  const [cachedTotalStock, setCachedTotalStock] = useState(0);
+  const [cachedInventoryValue, setCachedInventoryValue] = useState(0);
+
+  // Hitung cache saat products pertama kali load
+  useEffect(() => {
+    if (products.length > 0 && cachedTotalStock === 0) {
+      const totalStock = products.reduce((sum, p) => sum + (Number(p.stock) || 0), 0);
+      const inventoryValue = products.reduce((sum, p) => sum + ((Number(p.price) || 0) * (Number(p.stock) || 0)), 0);
+      setCachedTotalStock(totalStock);
+      setCachedInventoryValue(inventoryValue);
+    }
+  }, [products, cachedTotalStock]);
 
   // FUNGSI TAMBAH PRODUK via API
   // Dipanggil dari FormData saat user submit form
@@ -34,19 +49,6 @@ export default function AdminPage() {
     } catch (err) {
       console.error('Error deleting product:', err);
       alert(`Gagal menghapus produk: ${err.message}`);
-    }
-  };
-
-  // ✨ FUNGSI EDIT PRODUK via API
-  // Dipanggil dari DataTable saat user submit form edit
-  const handleEditProduct = async (updatedProduct) => {
-    try {
-      console.log('Mengupdate produk:', updatedProduct);
-      await updateProduct(updatedProduct);
-      alert('Produk berhasil diupdate!');
-    } catch (err) {
-      console.error('Error updating product:', err);
-      alert(`Gagal mengupdate produk: ${err.message}`);
     }
   };
 
@@ -114,18 +116,23 @@ export default function AdminPage() {
             <h3 className="text-blue-600 text-sm font-bold uppercase tracking-wide">Total Stok</h3>
             {/* Jumlahkan semua stok dari setiap produk menggunakan reduce */}
             <p className="text-3xl font-bold text-blue-700 mt-2">
-              {products.reduce((sum, p) => sum + p.stock, 0)}
+              {cachedTotalStock}
             </p>
           </div>
           
           {/* CARD 3: Nilai Inventori */}
           <div className="bg-white p-6 rounded-lg shadow-md">
             <h3 className="text-blue-600 text-sm font-bold uppercase tracking-wide">Nilai Inventori</h3>
-            {/* Hitung total nilai: harga × stok untuk setiap produk
-                Dibagi 1 juta untuk tampil dalam jutaan
-                toFixed(0) untuk bulatkan tanpa desimal */}
+            {/* Hitung total nilai: harga × stok untuk setiap produk */}
             <p className="text-3xl font-bold text-blue-700 mt-2">
-              Rp {(products.reduce((sum, p) => sum + (p.price * p.stock), 0) / 1000000).toFixed(0)}jt
+              {new Intl.NumberFormat('id-ID', {
+                style: 'currency',
+                currency: 'IDR',
+                minimumFractionDigits: 0
+              }).format(cachedInventoryValue)}
+            </p>
+            <p className="text-xs text-gray-500 mt-1">
+              Total nilai semua produk × stok
             </p>
           </div>
         </div>
@@ -137,12 +144,10 @@ export default function AdminPage() {
         
         {/* TABEL PRODUK 
             Props products = array semua produk untuk ditampilkan
-            Props onDelete = fungsi untuk menghapus produk
-            Props onEdit = fungsi untuk edit produk (BARU) */}
+            Props onDelete = fungsi untuk menghapus produk */}
         <DataTable 
           products={products} 
           onDelete={handleDelete}
-          onEdit={handleEditProduct}
         />
       </div>
     </div>
