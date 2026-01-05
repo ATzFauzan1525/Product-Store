@@ -4,7 +4,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 
-export default function ProductCard({ product, onBuy }) {
+export default function ProductCard({ product, onBuy, onAddToCart }) {
   const navigate = useNavigate();
 
   const formatPrice = (price) => {
@@ -103,6 +103,15 @@ Bisa tolong info lebih lanjut?`;
 
         {/* Action Buttons */}
         <div className="flex gap-3">
+          {/* Add to Cart Button */}
+          <Button
+            onClick={() => onAddToCart(product)}
+            className="px-4 py-3.5 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-xl hover:from-blue-700 hover:to-indigo-700 transition-all duration-300 font-semibold shadow-lg shadow-blue-500/30 hover:shadow-xl hover:shadow-blue-500/40 flex items-center justify-center gap-2 group/button"
+          >
+            <ShoppingCart className="w-5 h-5 transition-transform group-hover/button:scale-110" />
+            <span>Tambah</span>
+          </Button>
+          
           {/* Buy Button */}
           <Button
             onClick={() => handleWhatsAppCheckout(product)}

@@ -5,7 +5,9 @@ import ProductCard from '../components/public/ProductCard';
 import Footer from '../components/public/Footer';
 import FilterBar from '../components/public/FilterBar';
 import FilterModal from '../components/public/FilterModal';
+import CartModal from '../components/public/CartModal';
 import { useProducts } from '../hooks/useProducts';
+import { useLocalStorage } from '../hooks/useLocalStorage';
 
 export default function UserPage() {
   const { products, loading, error } = useProducts();
@@ -15,6 +17,10 @@ export default function UserPage() {
   const [priceRange, setPriceRange] = useState([0, 50000000]);
   const [isFilterOpen, setIsFilterOpen] = useState(false);
   const [viewMode, setViewMode] = useState('grid');
+  const [cart, setCart] = useLocalStorage('cart', []);
+  const [isCartOpen, setIsCartOpen] = useState(false);
+  const [selectedCartItems, setSelectedCartItems] = useState([]);
+  const [isProcessingCheckout, setIsProcessingCheckout] = useState(false);
 
   // Get unique categories
   const categories = ['all', ...new Set(products.map(p => p.category))];
@@ -107,6 +113,97 @@ export default function UserPage() {
     alert(`Anda membeli ${product.name} seharga ${product.price.toLocaleString('id-ID')}`);
   };
 
+  const addToCart = (product) => {
+    setCart(prevCart => {
+      const existingItem = prevCart.find(item => item.id === product.id);
+      if (existingItem) {
+        return prevCart.map(item =>
+          item.id === product.id
+            ? { ...item, quantity: item.quantity + 1 }
+            : item
+        );
+      } else {
+        return [...prevCart, { ...product, quantity: 1 }];
+      }
+    });
+    alert(`${product.name} telah ditambahkan ke keranjang!`);
+  };
+
+  const updateCartQuantity = (productId, newQuantity) => {
+    if (newQuantity <= 0) {
+      removeFromCart(productId);
+      return;
+    }
+
+    setCart(prevCart =>
+      prevCart.map(item =>
+        item.id === productId
+          ? { ...item, quantity: newQuantity }
+          : item
+      )
+    );
+  };
+
+  const removeFromCart = (productId) => {
+    setCart(prevCart => prevCart.filter(item => item.id !== productId));
+    setSelectedCartItems(prev => prev.filter(id => id !== productId));
+  };
+
+  const toggleCartSelect = (itemIds) => {
+    if (Array.isArray(itemIds)) {
+      setSelectedCartItems(itemIds);
+    } else {
+      setSelectedCartItems(prev =>
+        prev.includes(itemIds)
+          ? prev.filter(id => id !== itemIds)
+          : [...prev, itemIds]
+      );
+    }
+  };
+
+  const handleCheckout = async (selectedItems) => {
+    if (selectedItems.length === 0) {
+      alert('Pilih produk yang ingin di-checkout terlebih dahulu!');
+      return;
+    }
+
+    setIsProcessingCheckout(true);
+
+    try {
+      const formatPrice = (price) => {
+        return new Intl.NumberFormat('id-ID', {
+          style: 'currency',
+          currency: 'IDR',
+          minimumFractionDigits: 0
+        }).format(price);
+      };
+
+      const totalPrice = selectedItems.reduce((total, item) => total + (item.price * item.quantity), 0);
+
+      // Format pesan WhatsApp
+      let message = `Halo, saya ingin memesan/booking produk berikut:\n\n`;
+
+      selectedItems.forEach((item, index) => {
+        message += `${index + 1}. ${item.name}\n`;
+        message += `   - Harga: ${formatPrice(item.price)}\n`;
+        message += `   - Jumlah: ${item.quantity}\n`;
+        message += `   - Subtotal: ${formatPrice(item.price * item.quantity)}\n\n`;
+      });
+
+      message += `Total Pembayaran: ${formatPrice(totalPrice)}\n\n`;
+      message += `Mohon konfirmasi ketersediaan stok dan informasi pembayaran. Terima kasih!`;
+
+      const whatsappUrl = `https://wa.me/6287783273575?text=${encodeURIComponent(message)}`;
+      window.open(whatsappUrl, '_blank');
+      setIsCartOpen(false);
+    } catch (error) {
+      console.error('Error during checkout:', error);
+      alert('Terjadi kesalahan saat memproses checkout. Silakan coba lagi.');
+    } finally {
+      setIsProcessingCheckout(false);
+    }
+  };
+
   const hasActiveFilters = searchQuery || selectedCategory !== 'all' || 
     priceRange[0] !== 0 || priceRange[1] !== 50000000;
 
@@ -151,7 +248,12 @@ export default function UserPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50">
-      <Navbar searchQuery={searchQuery} onSearch={handleSearch} />
+      <Navbar
+        searchQuery={searchQuery}
+        onSearch={handleSearch}
+        cart={cart}
+        onCartClick={() => setIsCartOpen(true)}
+      />
       
      {/* Hero Section */}
 <div className="relative overflow-hidden bg-gradient-to-r from-blue-600 to-indigo-700">
@@ -335,7 +437,34 @@ export default function UserPage() {
                 <ProductCard 
                   product={product} 
                   onBuy={handleBuy}
+                  onAddToCart={addToCart}
                 />
+              </div>
+            ))}
+          </div>
+        )}
+
+        {/* Loading Skeleton */}
+        {loading && (
+          <div className={`grid gap-8 ${
+            viewMode === 'grid' 
+              ? 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3' 
+              : 'grid-cols-1'
+          }`}>
+            {Array.from({ length: 6 }).map((_, index) => (
+              <div key={index} className="animate-pulse">
+                <div className="bg-white rounded-xl overflow-hidden shadow-lg">
+                  <div className="h-56 bg-gray-200"></div>
+                  <div className="p-6">
+                    <div className="h-6 bg-gray-200 rounded mb-3"></div>
+                    <div className="h-4 bg-gray-200 rounded mb-2 w-3/4"></div>
+                    <div className="h-4 bg-gray-200 rounded mb-4 w-1/2"></div>
+                    <div className="flex gap-3">
+                      <div className="h-12 bg-gray-200 rounded-xl flex-1"></div>
+                      <div className="h-12 bg-gray-200 rounded-xl w-12"></div>
+                    </div>
+                  </div>
+                </div>
               </div>
             ))}
           </div>
@@ -350,6 +479,19 @@ export default function UserPage() {
         selectedCategory={selectedCategory}
         priceRange={priceRange}
         onApply={handleFilterApply}
+      />
+
+      {/* Cart Modal */}
+      <CartModal
+        isOpen={isCartOpen}
+        onClose={() => setIsCartOpen(false)}
+        cart={cart}
+        onUpdateQuantity={updateCartQuantity}
+        onRemoveItem={removeFromCart}
+        selectedItems={selectedCartItems}
+        onToggleSelect={toggleCartSelect}
+        onCheckout={handleCheckout}
+        isProcessingCheckout={isProcessingCheckout}
       />
 
       <Footer />

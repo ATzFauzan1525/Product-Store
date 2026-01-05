@@ -59,12 +59,12 @@ export default function ProductDetail() {
     
     const message = `Halo! Saya tertarik dengan produk:
 
-📱 *${product.name}*
-💰 Harga: ${formattedPrice}
-📦 Jumlah: ${quantity} unit
-💸 Total: ${formattedTotalPrice}
-🏷️ Kategori: ${product.category}
-📊 Stok tersedia: ${product.stock} unit
+*Nama Produk*: ${product.name}
+*Harga*: ${formattedPrice}
+*Jumlah*: ${quantity} unit
+*Total*: ${formattedTotalPrice}
+*Kategori*: ${product.category}
+*Stok tersedia*: ${product.stock} unit
 
 Bisa tolong info lebih lanjut?`;
 
