@@ -7,7 +7,9 @@ export default function EditModal({ isOpen, onClose, product, onSave }) {
     price: '',
     category: '',
     stock: '',
-    image: ''
+    description: '',
+    image: '',
+    isAvailable: true
   });
 
   // Update form data ketika product berubah atau modal dibuka
@@ -18,7 +20,9 @@ export default function EditModal({ isOpen, onClose, product, onSave }) {
         price: product.price?.toString() || '',
         category: product.category || '',
         stock: product.stock?.toString() || '',
-        image: product.image || ''
+        description: product.description || '',
+        image: product.image || '',
+        isAvailable: product.isAvailable !== undefined ? product.isAvailable : true
       });
     }
   }, [product, isOpen]);
@@ -32,7 +36,9 @@ export default function EditModal({ isOpen, onClose, product, onSave }) {
       price: Number(formData.price),
       category: formData.category,
       stock: Number(formData.stock),
-      image: formData.image || 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=400'
+      description: formData.description,
+      image: formData.image || 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=400',
+      isAvailable: formData.isAvailable
     };
     
     onSave(product.id, updatedProduct);
@@ -182,6 +188,39 @@ export default function EditModal({ isOpen, onClose, product, onSave }) {
                 <option value="Wearables">⌚ Wearables</option>
                 <option value="Camera">📷 Camera</option>
               </select>
+            </div>
+
+            {/* INPUT DESKRIPSI */}
+            <div className="group">
+              <label className="flex items-center gap-2 text-sm font-semibold text-gray-700 mb-2">
+                📝 Deskripsi Produk
+              </label>
+              <textarea
+                name="description"
+                value={formData.description}
+                onChange={handleChange}
+                required
+                rows="4"
+                className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-gray-500 focus:border-gray-500 transition-all duration-200 hover:border-gray-300"
+                placeholder="Jelaskan detail produk, fitur, dan spesifikasinya..."
+              />
+            </div>
+
+            {/* CHECKBOX STATUS TERSEDIA */}
+            <div className="group">
+              <label className="flex items-center gap-2 text-sm font-semibold text-gray-700 mb-2">
+                ✅ Status Produk
+              </label>
+              <div className="flex items-center space-x-3">
+                <input
+                  type="checkbox"
+                  name="isAvailable"
+                  checked={formData.isAvailable}
+                  onChange={(e) => setFormData({ ...formData, isAvailable: e.target.checked })}
+                  className="w-5 h-5 text-green-600 bg-gray-100 border-gray-300 rounded focus:ring-green-500 focus:ring-2"
+                />
+                <span className="text-gray-700">Produk tersedia untuk dijual</span>
+              </div>
             </div>
 
             {/* INPUT URL GAMBAR */}
