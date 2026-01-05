@@ -63,6 +63,7 @@ export default function DataTable({ products, onDelete }) {
                 <TableHead>ID</TableHead>
                 <TableHead>Produk</TableHead>
                 <TableHead>Kategori</TableHead>
+                <TableHead>Deskripsi</TableHead>
                 <TableHead>Harga</TableHead>
                 <TableHead>Stok</TableHead>
                 <TableHead>Aksi</TableHead>
@@ -94,6 +95,11 @@ export default function DataTable({ products, onDelete }) {
                       {product.category}
                     </span>
                   </TableCell>
+                  <TableCell>
+                    <p className="text-sm text-gray-600 max-w-xs line-clamp-2">
+                      {product.description}
+                    </p>
+                  </TableCell>
                   <TableCell className="font-bold text-gray-900">
                     {formatPrice(product.price)}
                   </TableCell>
@@ -111,10 +117,13 @@ export default function DataTable({ products, onDelete }) {
                         <Button
                           variant="outline"
                           size="sm"
-                          className="bg-yellow-50 border-yellow-200 text-yellow-700 hover:bg-yellow-100"
+                          className="group relative overflow-hidden bg-gradient-to-br from-orange-400 via-amber-500 to-yellow-500 border-0 text-white font-bold shadow-lg hover:shadow-2xl hover:shadow-orange-300 transition-all duration-500 hover:scale-110 hover:-rotate-2"
                         >
-                          <Edit className="w-4 h-4 mr-2" />
-                          Edit
+                          <div className="absolute inset-0 bg-gradient-to-br from-yellow-400 via-orange-500 to-red-500 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                          <div className="absolute inset-0 bg-white/20 opacity-0 group-hover:opacity-100 animate-pulse"></div>
+                          <Edit className="w-4 h-4 mr-2 relative z-10 group-hover:rotate-180 group-hover:scale-125 transition-all duration-500" />
+                          <span className="relative z-10 tracking-wide">Edit</span>
+                          <div className="absolute inset-0 rounded-md bg-gradient-to-r from-transparent via-white/40 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000"></div>
                         </Button>
                       </Link>
                       <Dialog>
@@ -122,9 +131,13 @@ export default function DataTable({ products, onDelete }) {
                           <Button
                             variant="destructive"
                             size="sm"
+                            className="group relative overflow-hidden bg-gradient-to-br from-red-600 via-rose-600 to-pink-600 border-0 font-bold shadow-lg hover:shadow-2xl hover:shadow-red-400 transition-all duration-500 hover:scale-110 hover:rotate-2"
                           >
-                            <Trash2 className="w-4 h-4 mr-2" />
-                            Hapus
+                            <div className="absolute inset-0 bg-gradient-to-br from-pink-600 via-red-600 to-rose-800 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                            <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 animate-pulse"></div>
+                            <Trash2 className="w-4 h-4 mr-2 relative z-10 group-hover:scale-125 group-hover:-rotate-12 transition-all duration-500" />
+                            <span className="relative z-10 tracking-wide">Hapus</span>
+                            <div className="absolute inset-0 rounded-md bg-gradient-to-r from-transparent via-white/40 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000"></div>
                           </Button>
                         </DialogTrigger>
                         <DialogContent>
