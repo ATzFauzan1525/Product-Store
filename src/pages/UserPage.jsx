@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Sparkles, TrendingUp, Star, X } from 'lucide-react';
 import Navbar from '../components/public/Navbar';
 import ProductCard from '../components/public/ProductCard';
@@ -21,9 +21,30 @@ export default function UserPage() {
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [selectedCartItems, setSelectedCartItems] = useState([]);
   const [isProcessingCheckout, setIsProcessingCheckout] = useState(false);
+  const productRefs = useRef({});
+  const [highlightedProduct, setHighlightedProduct] = useState(null);
 
   // Get unique categories
   const categories = ['all', ...new Set(products.map(p => p.category))];
+
+  // Scroll to first matching product when search query changes
+  useEffect(() => {
+    if (searchQuery.trim() && filteredProducts.length > 0) {
+      const firstMatchingProduct = filteredProducts[0];
+      if (firstMatchingProduct && productRefs.current[firstMatchingProduct.id]) {
+        setHighlightedProduct(firstMatchingProduct.id);
+        productRefs.current[firstMatchingProduct.id].scrollIntoView({
+          behavior: 'smooth',
+          block: 'center'
+        });
+        
+        // Remove highlight after 2 seconds
+        setTimeout(() => {
+          setHighlightedProduct(null);
+        }, 2000);
+      }
+    }
+  }, [searchQuery, filteredProducts]);
 
   // Filter products
   const applyFilters = () => {
@@ -164,6 +185,19 @@ export default function UserPage() {
   const handleCheckout = async (selectedItems) => {
     if (selectedItems.length === 0) {
       alert('Pilih produk yang ingin di-checkout terlebih dahulu!');
+      return;
+    }
+
+    // Cegah checkout jika ada item stok kosong atau quantity melebihi stok
+    const zeroStock = selectedItems.some(item => Number(item.stock) <= 0);
+    if (zeroStock) {
+      alert('Ada produk yang stoknya kosong. Hapus atau perbarui stok sebelum checkout.');
+      return;
+    }
+
+    const overQty = selectedItems.some(item => Number(item.quantity) > Number(item.stock));
+    if (overQty) {
+      alert('Ada produk yang jumlahnya melebihi stok tersedia. Periksa kembali keranjang Anda.');
       return;
     }
 
@@ -421,15 +455,18 @@ export default function UserPage() {
             </button>
           </div>
         ) : (
-          <div className={`grid gap-8 ${
+          <div className={`grid ${
             viewMode === 'grid' 
-              ? 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3' 
-              : 'grid-cols-1'
+              ? 'gap-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-3' 
+              : 'gap-4 grid-cols-1'
           }`}>
             {filteredProducts.map((product, index) => (
               <div 
                 key={product.id}
-                className="transform transition-all duration-300 hover:scale-105"
+                ref={(el) => (productRefs.current[product.id] = el)}
+                className={`transform transition-all duration-300 hover:scale-105 ${
+                  highlightedProduct === product.id ? 'ring-4 ring-blue-500 ring-opacity-50 scale-105' : ''
+                }`}
                 style={{
                   animation: `fadeInUp 0.5s ease-out ${index * 0.1}s both`
                 }}
@@ -438,6 +475,8 @@ export default function UserPage() {
                   product={product} 
                   onBuy={handleBuy}
                   onAddToCart={addToCart}
+                  viewMode={viewMode}
+                  isHighlighted={highlightedProduct === product.id}
                 />
               </div>
             ))}
@@ -446,10 +485,10 @@ export default function UserPage() {
 
         {/* Loading Skeleton */}
         {loading && (
-          <div className={`grid gap-8 ${
+          <div className={`grid ${
             viewMode === 'grid' 
-              ? 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3' 
-              : 'grid-cols-1'
+              ? 'gap-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-3' 
+              : 'gap-4 grid-cols-1'
           }`}>
             {Array.from({ length: 6 }).map((_, index) => (
               <div key={index} className="animate-pulse">

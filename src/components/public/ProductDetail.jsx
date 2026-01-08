@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { 
@@ -9,8 +10,7 @@ import {
   Heart,
   Share2,
   Truck,
-  Shield,
-  RefreshCw
+  Shield
 } from 'lucide-react';
 import { getProductById, formatProductFromApi } from '../../services/api';
 
@@ -50,28 +50,11 @@ export default function ProductDetail() {
     }).format(price);
   };
 
-  const handleWhatsAppCheckout = () => {
-    if (!product) return;
-    
-    const formattedPrice = formatPrice(product.price);
-    const totalPrice = product.price * quantity;
-    const formattedTotalPrice = formatPrice(totalPrice);
-    
-    const message = `Halo! Saya tertarik dengan produk:
-
-*Nama Produk*: ${product.name}
-*Harga*: ${formattedPrice}
-*Jumlah*: ${quantity} unit
-*Total*: ${formattedTotalPrice}
-*Kategori*: ${product.category}
-*Stok tersedia*: ${product.stock} unit
-
-Bisa tolong info lebih lanjut?`;
-
-    const encodedMessage = encodeURIComponent(message);
-    const whatsappUrl = `https://wa.me/6281234567890?text=${encodedMessage}`;
-    
-    window.open(whatsappUrl, '_blank');
+  const handleCheckout = () => {
+    const message = `Halo, saya ingin memesan/booking ${product.name}
+Jumlah: ${quantity}
+Total: ${formatPrice(product.price * quantity)}`;
+    window.open(`https://wa.me/6287783273575?text=${encodeURIComponent(message)}`);
   };
 
   const handleShare = async () => {
@@ -86,7 +69,6 @@ Bisa tolong info lebih lanjut?`;
         console.log('Error sharing:', err);
       }
     } else {
-      // Fallback to clipboard
       navigator.clipboard.writeText(window.location.href);
       alert('Link produk telah disalin!');
     }
@@ -125,7 +107,6 @@ Bisa tolong info lebih lanjut?`;
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50">
-      {/* Header */}
       <div className="bg-white shadow-sm border-b">
         <div className="container mx-auto px-4 py-4">
           <div className="flex items-center gap-4">
@@ -140,11 +121,8 @@ Bisa tolong info lebih lanjut?`;
         </div>
       </div>
 
-      {/* Main Content */}
       <div className="container mx-auto px-4 py-8">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
-          
-          {/* Product Image */}
           <div className="space-y-4">
             <div className="aspect-square rounded-2xl overflow-hidden bg-white shadow-lg">
               <img 
@@ -155,10 +133,7 @@ Bisa tolong info lebih lanjut?`;
             </div>
           </div>
 
-          {/* Product Info */}
           <div className="space-y-6">
-            
-            {/* Title and Actions */}
             <div>
               <div className="flex items-start justify-between mb-4">
                 <h1 className="text-3xl font-bold text-gray-900 leading-tight">
@@ -184,7 +159,6 @@ Bisa tolong info lebih lanjut?`;
                 </div>
               </div>
               
-              {/* Category */}
               <div className="flex items-center gap-2 mb-4">
                 <Tag className="w-4 h-4 text-blue-600" />
                 <span className="px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-sm font-medium">
@@ -193,7 +167,6 @@ Bisa tolong info lebih lanjut?`;
               </div>
             </div>
 
-            {/* Price */}
             <div className="bg-gradient-to-r from-blue-50 to-indigo-50 p-6 rounded-2xl">
               <div className="flex items-baseline gap-3">
                 <span className="text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-600">
@@ -203,7 +176,6 @@ Bisa tolong info lebih lanjut?`;
               <p className="text-sm text-gray-600 mt-1">Harga terbaik untuk Anda</p>
             </div>
 
-            {/* Stock Info */}
             <div className="bg-white p-4 rounded-xl border border-gray-200">
               <div className="flex items-center gap-3">
                 <Package className="w-5 h-5 text-green-600" />
@@ -214,7 +186,6 @@ Bisa tolong info lebih lanjut?`;
               </div>
             </div>
 
-            {/* Quantity Selector */}
             <div className="bg-white p-4 rounded-xl border border-gray-200">
               <label className="block font-semibold text-gray-900 mb-3">Jumlah</label>
               <div className="flex items-center gap-4">
@@ -226,7 +197,7 @@ Bisa tolong info lebih lanjut?`;
                   >
                     -
                   </button>
-                  <span className py-2 border="px-6-x border-gray-300 font-semibold">
+                  <span className="px-6 py-2 font-semibold border-x border-gray-300">
                     {quantity}
                   </span>
                   <button
@@ -243,41 +214,32 @@ Bisa tolong info lebih lanjut?`;
               </div>
             </div>
 
-            {/* Total Price */}
             <div className="bg-gradient-to-r from-green-50 to-emerald-50 p-4 rounded-xl border border-green-200">
               <div className="flex items-center justify-between">
-                <span className="font-semibold text-gray-900">:</span>
+                <span className="font-semibold text-gray-900">Total:</span>
                 <span className="text-2xl font-bold text-green-600">
                   {formatPrice(product.price * quantity)}
                 </span>
               </div>
             </div>
 
-            {/* Action Buttons */}
             <div className="space-y-3">
               <button
-                onClick={handleWhatsAppCheckout}
+                onClick={handleCheckout}
                 className="w-full bg-gradient-to-r from-green-600 to-green-700 text-white py-4 rounded-xl hover:from-green-700 hover:to-green-800 transition-all duration-300 font-bold text-lg shadow-lg shadow-green-500/30 hover:shadow-xl hover:shadow-green-500/40 flex items-center justify-center gap-3 transform hover:scale-105"
               >
                 <ShoppingCart className="w-6 h-6" />
                 Beli via WhatsApp
               </button>
               
-              <div className="grid grid-cols-2 gap-3">
-                <Link
-                  to="/"
-                  className="bg-gray-100 text-gray-700 py-3 rounded-xl hover:bg-gray-200 transition-colors font-semibold text-center"
-                >
-                  Kembali ke Katalog
-                </Link>
-                <button className="bg-blue-100 text-blue-700 py-3 rounded-xl hover:bg-blue-200 transition-colors font-semibold flex items-center justify-center gap-2">
-                  <RefreshCw className="w-4 h-4" />
-                  Tanya Stok
-                </button>
-              </div>
+              <Link
+                to="/"
+                className="w-full bg-gray-100 text-gray-700 py-3 rounded-xl hover:bg-gray-200 transition-colors font-semibold text-center block"
+              >
+                Kembali ke Katalog
+              </Link>
             </div>
 
-            {/* Features */}
             <div className="bg-white p-6 rounded-xl border border-gray-200">
               <h3 className="font-bold text-gray-900 mb-4">Keunggulan Belanja</h3>
               <div className="space-y-3">
@@ -301,3 +263,4 @@ Bisa tolong info lebih lanjut?`;
     </div>
   );
 }
+

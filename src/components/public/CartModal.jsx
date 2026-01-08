@@ -21,7 +21,30 @@ export default function CartModal({ isOpen, onClose, cart, onUpdateQuantity, onR
       alert('Pilih produk yang ingin di-checkout terlebih dahulu!');
       return;
     }
-    onCheckout(selectedCartItems);
+    // Cek apakah ada item yang stoknya kosong (0 atau kurang)
+    const zeroStockItems = selectedCartItems.filter(item => Number(item.stock) <= 0);
+
+    if (zeroStockItems.length > 0) {
+      const names = zeroStockItems.map(i => i.name).join(', ');
+      const confirmMsg = `Beberapa produk yang dipilih stoknya kosong: ${names}.\n\nApakah Anda ingin menghapus produk-produk ini dari keranjang sebelum melanjutkan checkout?`;
+      if (window.confirm(confirmMsg)) {
+        // Hapus item stok 0 dari keranjang
+        zeroStockItems.forEach(i => onRemoveItem(i.id));
+
+        // Lanjutkan checkout hanya dengan item yang masih tersisa dan memiliki stok > 0
+        const remaining = selectedCartItems.filter(item => Number(item.stock) > 0);
+        if (remaining.length === 0) {
+          alert('Semua produk yang dipilih stoknya kosong dan telah dihapus dari keranjang.');
+          return;
+        }
+        onCheckout(remaining);
+      } else {
+        // Batalkan checkout jika user tidak ingin menghapus item stok kosong
+        return;
+      }
+    } else {
+      onCheckout(selectedCartItems);
+    }
   };
 
   return (

@@ -4,7 +4,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 
-export default function ProductCard({ product, onBuy, onAddToCart }) {
+export default function ProductCard({ product, onBuy, onAddToCart, viewMode = 'grid', isHighlighted = false }) {
   const navigate = useNavigate();
 
   const formatPrice = (price) => {
@@ -15,25 +15,9 @@ export default function ProductCard({ product, onBuy, onAddToCart }) {
     }).format(price);
   };
 
-  const handleWhatsAppCheckout = (product) => {
-    const formattedPrice = formatPrice(product.price);
-    const message = `Halo! Saya tertarik dengan produk:
-
-📱 *${product.name}*
-💰 Harga: ${formattedPrice}
-📦 Stok: ${product.stock} unit
-🏷️ Kategori: ${product.category}
-
-Bisa tolong info lebih lanjut?`;
-
-    const encodedMessage = encodeURIComponent(message);
-    const whatsappUrl = `https://wa.me/6287783273575?text=${encodedMessage}`;
-    
-    // Open WhatsApp in new tab
-    window.open(whatsappUrl, '_blank');
-    
-    // Call onBuy for any additional analytics or logging
-    onBuy(product);
+  const handleCheckout = () => {
+    const message = `Halo, saya ingin memesan/booking ${product.name}`;
+    window.open(`https://wa.me/6287783273575?text=${encodeURIComponent(message)}`);
   };
 
   const handleViewDetails = (product) => {
@@ -41,13 +25,19 @@ Bisa tolong info lebih lanjut?`;
   };
 
   return (
-    <Card className="group overflow-hidden hover:shadow-2xl transition-all duration-300">
+    <Card className={`group overflow-hidden hover:shadow-2xl transition-all duration-300 p-0 ${
+      viewMode === 'list' ? 'flex' : ''
+    } ${isHighlighted ? 'ring-2 ring-blue-400 shadow-blue-200' : ''}`}>
       {/* Image Container with Overlay */}
-      <div className="relative overflow-hidden cursor-pointer" onClick={() => handleViewDetails(product)}>
+      <div className={`relative overflow-hidden cursor-pointer bg-white ${
+        viewMode === 'list' ? 'w-80 flex-shrink-0' : ''
+      }`} onClick={() => handleViewDetails(product)}>
         <img 
           src={product.image} 
           alt={product.name}
-          className="w-full h-56 object-cover transition-transform duration-500 group-hover:scale-110"
+          className={`object-cover object-center transition-transform duration-500 group-hover:scale-110 ${
+            viewMode === 'grid' ? 'w-full h-96' : 'w-full h-56'
+          }`}
         />
         <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/0 to-black/0 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
         
@@ -83,7 +73,9 @@ Bisa tolong info lebih lanjut?`;
       </div>
 
       {/* Content */}
-      <div className="p-6">
+      <div className={`${
+        viewMode === 'list' ? 'flex-1 p-6' : 'p-6'
+      }`}>
         <h3 
           className="text-xl font-bold text-gray-900 mb-3 line-clamp-2 group-hover:text-blue-600 transition-colors cursor-pointer"
           onClick={() => handleViewDetails(product)}
@@ -114,7 +106,7 @@ Bisa tolong info lebih lanjut?`;
           
           {/* Buy Button */}
           <Button
-            onClick={() => handleWhatsAppCheckout(product)}
+            onClick={handleCheckout}
             className="flex-1 bg-gradient-to-r from-green-600 to-green-700 text-white py-3.5 rounded-xl hover:from-green-700 hover:to-green-800 transition-all duration-300 font-semibold shadow-lg shadow-green-500/30 hover:shadow-xl hover:shadow-green-500/40 flex items-center justify-center gap-2 group/button"
           >
             <ShoppingCart className="w-5 h-5 transition-transform group-hover/button:scale-110" />
@@ -134,3 +126,4 @@ Bisa tolong info lebih lanjut?`;
     </Card>
   );
 }
+
