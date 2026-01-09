@@ -82,7 +82,7 @@ export default function FormData({ onAddProduct }) {
         description: '',
         image: ''
       });
-+      setIsAvailable(true);
+      setIsAvailable(true);
     } catch (error) {
       console.error('Error adding product:', error);
       // Error handling is done in parent component
