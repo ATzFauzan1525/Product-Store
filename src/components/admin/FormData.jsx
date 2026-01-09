@@ -21,12 +21,42 @@ export default function FormData({ onAddProduct }) {
     image: ''         // URL gambar produk
   });
 
+  // Tambah isAvailable flag: kalau tidak dicentang, stok otomatis 0
+  const [isAvailable, setIsAvailable] = useState(true);
+
   // FUNGSI SUBMIT - dipanggil saat tombol "Tambah Produk" diklik
   const handleSubmit = async (e) => {
     e.preventDefault(); // Mencegah reload halaman
-    
+
+    // VALIDASI FORM - pastikan semua field required sudah diisi
+    if (!formData.name.trim()) {
+      alert('Nama produk harus diisi!');
+      return;
+    }
+
+    if (!formData.price || Number(formData.price) <= 0) {
+      alert('Harga produk harus diisi dan lebih dari 0!');
+      return;
+    }
+
+    if (!formData.category.trim()) {
+      alert('Kategori produk harus diisi!');
+      return;
+    }
+
+    if (isAvailable && (!formData.stock || Number(formData.stock) < 0)) {
+      alert('Stok produk harus diisi dan tidak boleh negatif!');
+      return;
+    }
+
+    if (!formData.description.trim()) {
+      alert('Deskripsi produk harus diisi!');
+      return;
+    }
+
     // Set loading state
     setIsSubmitting(true);
+
     
     try {
       // Buat objek produk baru dari data form
@@ -34,13 +64,13 @@ export default function FormData({ onAddProduct }) {
         name: formData.name,
         price: Number(formData.price),        // Ubah string jadi number
         category: formData.category,
-        stock: Number(formData.stock),        // Ubah string jadi number
+        stock: isAvailable ? Number(formData.stock) : 0,        // Jika tidak tersedia, stok = 0
         description: formData.description,
         image: formData.image || 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=400' // Pakai gambar default jika kosong
       };
       
       // Kirim produk baru ke parent component (AdminPage)
-      await onAddProduct(newProduct);
+      await onAddProduct({ ...newProduct, isAvailable });
       console.log('Product added:', newProduct);
       
       // RESET FORM - kosongkan semua input setelah submit berhasil
@@ -52,6 +82,7 @@ export default function FormData({ onAddProduct }) {
         description: '',
         image: ''
       });
++      setIsAvailable(true);
     } catch (error) {
       console.error('Error adding product:', error);
       // Error handling is done in parent component
@@ -153,8 +184,9 @@ export default function FormData({ onAddProduct }) {
                 name="stock"
                 value={formData.stock}
                 onChange={handleChange}
-                required
+                required={isAvailable}
                 min="0"
+                disabled={!isAvailable}
                 className="h-14 px-5 pr-20 text-base font-semibold border-2 border-gray-200 rounded-2xl focus:ring-4 focus:ring-blue-500/20 focus:border-blue-500 transition-all duration-300 hover:border-gray-300 hover:shadow-lg bg-white"
                 placeholder="0"
               />
@@ -162,6 +194,27 @@ export default function FormData({ onAddProduct }) {
               <span className="absolute right-5 top-1/2 -translate-y-1/2 text-gray-600 text-base font-bold">unit</span>
             </div>
           </div>
+        </div>
+
+        {/* Availability Checkbox */}
+        <div className="flex items-center gap-3">
+          <input
+            id="isAvailable"
+            name="isAvailable"
+            type="checkbox"
+            checked={isAvailable}
+            onChange={(e) => {
+              const checked = e.target.checked;
+              setIsAvailable(checked);
+              if (!checked) {
+                setFormData(prev => ({ ...prev, stock: '0' }));
+              } else {
+                setFormData(prev => ({ ...prev, stock: '' }));
+              }
+            }}
+            className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded"
+          />
+          <label htmlFor="isAvailable" className="text-sm font-medium text-gray-800">Produk tersedia (centang untuk mengisi stok)</label>
         </div>
 
         {/* INPUT KATEGORI - sekarang text input */}

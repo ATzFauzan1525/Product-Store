@@ -1,7 +1,3 @@
-// DataTable.jsx
-// FILE INI BERTUGAS: Menampilkan tabel daftar semua produk
-// User bisa lihat detail produk, edit, dan menghapus produk dari sini
-
 import { Trash2, Package, Edit } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import {
@@ -20,157 +16,143 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
+  DialogClose, // ✅ TAMBAH
 } from "../ui/dialog";
 import { Button } from "../ui/button";
 
-// Props: 
-// - products = array berisi semua produk
-// - onDelete = fungsi untuk menghapus produk
-export default function DataTable({ products, onDelete }) {
-  
-  // FUNGSI FORMAT HARGA - mengubah angka jadi format Rupiah
-  const formatPrice = (price) => {
+export default function DataTable({ products = [], onDelete, onAddProduct }) {
+
+  const formatPrice = (price = 0) => {
     return new Intl.NumberFormat('id-ID', {
       style: 'currency',
       currency: 'IDR',
-      minimumFractionDigits: 0
+      minimumFractionDigits: 0,
     }).format(price);
   };
 
   return (
-    <>
-      {/* CONTAINER TABEL dengan shadow dan border */}
-      <div className="bg-white rounded-2xl shadow-xl overflow-hidden border border-gray-100">
-        
-        {/* HEADER TABEL - background biru dengan judul */}
-        <div className="bg-gradient-to-r from-blue-600 to-blue-700 p-6 border-b border-blue-800">
+    <div className="bg-white rounded-2xl shadow-xl overflow-hidden border border-gray-100">
+      {/* HEADER */}
+      <div className="bg-gradient-to-r from-blue-600 to-blue-700 p-6 border-b border-blue-800">
+        <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="bg-white/20 backdrop-blur-sm p-2 rounded-lg">
+            <div className="bg-white/20 p-2 rounded-lg">
               <Package className="w-5 h-5 text-white" />
             </div>
             <div>
               <h2 className="text-2xl font-bold text-white">Daftar Produk</h2>
-              <p className="text-sm text-blue-100 mt-1">Total: {products.length} produk</p>
+              <p className="text-sm text-blue-100 mt-1">
+                Total: {products.length} produk
+              </p>
             </div>
           </div>
+
+          <button
+            onClick={onAddProduct}
+            className="bg-white text-blue-700 px-6 py-3 rounded-xl font-bold shadow-lg hover:scale-105 transition"
+          >
+            + Tambah Produk
+          </button>
         </div>
-        
-        {/* WRAPPER TABLE - bisa scroll horizontal di layar kecil */}
-        <div className="overflow-x-auto">
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>ID</TableHead>
-                <TableHead>Produk</TableHead>
-                <TableHead>Kategori</TableHead>
-                <TableHead>Deskripsi</TableHead>
-                <TableHead>Harga</TableHead>
-                <TableHead>Stok</TableHead>
-                <TableHead>Aksi</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {products.map((product) => (
-                <TableRow key={product.id}>
-                  <TableCell className="font-semibold text-blue-600">
-                    {product.id}
-                  </TableCell>
-                  <TableCell>
-                    <div className="flex items-center gap-3">
-                      <div className="relative">
-                        <img 
-                          src={product.image} 
-                          alt={product.name}
-                          className="w-12 h-12 rounded-xl object-cover shadow-md"
-                        />
-                        <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-green-500 rounded-full border-2 border-white"></div>
-                      </div>
-                      <span className="font-semibold text-gray-900">
-                        {product.name}
-                      </span>
-                    </div>
-                  </TableCell>
-                  <TableCell>
-                    <span className="px-3 py-1 rounded-full text-xs font-semibold bg-blue-100 text-blue-700">
-                      {product.category}
-                    </span>
-                  </TableCell>
-                  <TableCell>
-                    <p className="text-sm text-gray-600 max-w-xs line-clamp-2">
-                      {product.description}
-                    </p>
-                  </TableCell>
-                  <TableCell className="font-bold text-gray-900">
-                    {formatPrice(product.price)}
-                  </TableCell>
-                  <TableCell>
-                    <div className="flex items-center gap-2">
-                      <div className={`w-2 h-2 rounded-full ${product.stock > 50 ? 'bg-green-500' : product.stock > 20 ? 'bg-yellow-500' : 'bg-red-500'}`}></div>
-                      <span className="text-sm text-gray-700 font-medium">
-                        {product.stock} unit
-                      </span>
-                    </div>
-                  </TableCell>
-                  <TableCell>
-                    <div className="flex items-center gap-2">
-                      <Link to={`/admin/edit/${product.id}`}>
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          className="group relative overflow-hidden bg-gradient-to-br from-orange-400 via-amber-500 to-yellow-500 border-0 text-white font-bold shadow-lg hover:shadow-2xl hover:shadow-orange-300 transition-all duration-500 hover:scale-110 hover:-rotate-2"
-                        >
-                          <div className="absolute inset-0 bg-gradient-to-br from-yellow-400 via-orange-500 to-red-500 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-                          <div className="absolute inset-0 bg-white/20 opacity-0 group-hover:opacity-100 animate-pulse"></div>
-                          <Edit className="w-4 h-4 mr-2 relative z-10 group-hover:rotate-180 group-hover:scale-125 transition-all duration-500" />
-                          <span className="relative z-10 tracking-wide">Edit</span>
-                          <div className="absolute inset-0 rounded-md bg-gradient-to-r from-transparent via-white/40 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000"></div>
+      </div>
+
+      {/* TABLE */}
+      <div className="overflow-x-auto">
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead>ID</TableHead>
+              <TableHead>Produk</TableHead>
+              <TableHead>Kategori</TableHead>
+              <TableHead>Deskripsi</TableHead>
+              <TableHead>Harga</TableHead>
+              <TableHead>Stok</TableHead>
+              <TableHead>Aksi</TableHead>
+            </TableRow>
+          </TableHeader>
+
+          <TableBody>
+            {products.map((product) => (
+              <TableRow key={product.id}>
+                <TableCell className="font-semibold text-blue-600">
+                  {product.id}
+                </TableCell>
+
+                <TableCell>
+                  <div className="flex items-center gap-3">
+                    <img
+                      src={product.image || "/placeholder.png"} // ✅ fallback
+                      alt={product.name}
+                      className="w-12 h-12 rounded-xl object-cover"
+                    />
+                    <span className="font-semibold">{product.name}</span>
+                  </div>
+                </TableCell>
+
+                <TableCell>{product.category}</TableCell>
+
+                <TableCell className="text-sm text-gray-600 line-clamp-2">
+                  {product.description}
+                </TableCell>
+
+                <TableCell className="font-bold">
+                  {formatPrice(product.price)}
+                </TableCell>
+
+                <TableCell>{product.stock} unit</TableCell>
+
+                <TableCell>
+                  <div className="flex gap-2">
+                    <Link to={`/admin/edit/${product.id}`}>
+                      <Button size="sm">
+                        <Edit className="w-4 h-4 mr-1" />
+                        Edit
+                      </Button>
+                    </Link>
+
+                    <Dialog>
+                      <DialogTrigger asChild>
+                        <Button variant="destructive" size="sm">
+                          <Trash2 className="w-4 h-4 mr-1" />
+                          Hapus
                         </Button>
-                      </Link>
-                      <Dialog>
-                        <DialogTrigger asChild>
+                      </DialogTrigger>
+
+                      <DialogContent>
+                        <DialogHeader>
+                          <DialogTitle>Hapus Produk</DialogTitle>
+                          <DialogDescription>
+                            Yakin hapus "{product.name}"?
+                          </DialogDescription>
+                        </DialogHeader>
+
+                        <DialogFooter>
+                          <DialogClose asChild>
+                            <Button variant="outline">Batal</Button>
+                          </DialogClose>
+
                           <Button
                             variant="destructive"
-                            size="sm"
-                            className="group relative overflow-hidden bg-gradient-to-br from-red-600 via-rose-600 to-pink-600 border-0 font-bold shadow-lg hover:shadow-2xl hover:shadow-red-400 transition-all duration-500 hover:scale-110 hover:rotate-2"
+                            onClick={() => onDelete(product.id)}
                           >
-                            <div className="absolute inset-0 bg-gradient-to-br from-pink-600 via-red-600 to-rose-800 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-                            <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 animate-pulse"></div>
-                            <Trash2 className="w-4 h-4 mr-2 relative z-10 group-hover:scale-125 group-hover:-rotate-12 transition-all duration-500" />
-                            <span className="relative z-10 tracking-wide">Hapus</span>
-                            <div className="absolute inset-0 rounded-md bg-gradient-to-r from-transparent via-white/40 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000"></div>
+                            Hapus
                           </Button>
-                        </DialogTrigger>
-                        <DialogContent>
-                          <DialogHeader>
-                            <DialogTitle>Hapus Produk</DialogTitle>
-                            <DialogDescription>
-                              Apakah Anda yakin ingin menghapus produk "{product.name}"? Tindakan ini tidak dapat dibatalkan.
-                            </DialogDescription>
-                          </DialogHeader>
-                          <DialogFooter>
-                            <Button variant="outline">Batal</Button>
-                            <Button variant="destructive" onClick={() => onDelete(product.id)}>
-                              Hapus
-                            </Button>
-                          </DialogFooter>
-                        </DialogContent>
-                      </Dialog>
-                    </div>
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </div>
-        
-        {/* TAMPILAN KOSONG */}
-        {products.length === 0 && (
-          <div className="text-center py-12">
-            <Package className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-            <p className="text-gray-500 font-medium">Belum ada produk</p>
-          </div>
-        )}
+                        </DialogFooter>
+                      </DialogContent>
+                    </Dialog>
+                  </div>
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
       </div>
-    </>
+
+      {products.length === 0 && (
+        <div className="text-center py-10 text-gray-500">
+          Belum ada produk
+        </div>
+      )}
+    </div>
   );
 }
