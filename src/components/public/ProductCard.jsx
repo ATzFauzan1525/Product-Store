@@ -16,6 +16,12 @@ export default function ProductCard({ product, onBuy, onAddToCart, viewMode = 'g
   };
 
   const handleCheckout = () => {
+    // Validasi stok
+    if (Number(product.stock) <= 0) {
+      alert('❌ Stok sedang kosong. Mohon coba lagi nanti.');
+      return;
+    }
+
     const message = `Halo, saya ingin memesan/booking ${product.name}`;
     window.open(`https://wa.me/6287783273575?text=${encodeURIComponent(message)}`);
   };
@@ -66,8 +72,8 @@ export default function ProductCard({ product, onBuy, onAddToCart, viewMode = 'g
         {/* Stock Badge */}
         <div className="absolute top-4 right-4">
           <Badge variant="secondary" className="flex items-center gap-1.5 bg-white/95 backdrop-blur-sm shadow-lg">
-            <Package className="w-3.5 h-3.5 text-green-600" />
-            <span className="text-xs font-semibold text-gray-700">{product.stock}</span>
+            <Package className={`w-3.5 h-3.5 ${Number(product.stock) <= 0 ? 'text-red-600' : 'text-green-600'}`} />
+            <span className={`text-xs font-semibold ${Number(product.stock) <= 0 ? 'text-red-600' : 'text-gray-700'}`}>{Number(product.stock) <= 0 ? 'Stok Kosong' : product.stock}</span>
           </Badge>
         </div>
       </div>
@@ -98,7 +104,9 @@ export default function ProductCard({ product, onBuy, onAddToCart, viewMode = 'g
           {/* Add to Cart Button */}
           <Button
             onClick={() => onAddToCart(product)}
-            className="px-4 py-3.5 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-xl hover:from-blue-700 hover:to-indigo-700 transition-all duration-300 font-semibold shadow-lg shadow-blue-500/30 hover:shadow-xl hover:shadow-blue-500/40 flex items-center justify-center gap-2 group/button"
+            disabled={Number(product.stock) <= 0}
+            className="px-4 py-3.5 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-xl hover:from-blue-700 hover:to-indigo-700 disabled:from-gray-400 disabled:to-gray-400 disabled:cursor-not-allowed transition-all duration-300 font-semibold shadow-lg shadow-blue-500/30 hover:shadow-xl hover:shadow-blue-500/40 flex items-center justify-center gap-2 group/button"
+            title={Number(product.stock) <= 0 ? "Stok sedang kosong" : "Tambah ke keranjang"}
           >
             <ShoppingCart className="w-5 h-5 transition-transform group-hover/button:scale-110" />
             <span>Tambah</span>
@@ -107,10 +115,12 @@ export default function ProductCard({ product, onBuy, onAddToCart, viewMode = 'g
           {/* Buy Button */}
           <Button
             onClick={handleCheckout}
-            className="flex-1 bg-gradient-to-r from-green-600 to-green-700 text-white py-3.5 rounded-xl hover:from-green-700 hover:to-green-800 transition-all duration-300 font-semibold shadow-lg shadow-green-500/30 hover:shadow-xl hover:shadow-green-500/40 flex items-center justify-center gap-2 group/button"
+            disabled={Number(product.stock) <= 0}
+            className="flex-1 bg-gradient-to-r from-green-600 to-green-700 text-white py-3.5 rounded-xl hover:from-green-700 hover:to-green-800 disabled:from-gray-400 disabled:to-gray-400 disabled:cursor-not-allowed transition-all duration-300 font-semibold shadow-lg shadow-green-500/30 hover:shadow-xl hover:shadow-green-500/40 flex items-center justify-center gap-2 group/button"
+            title={Number(product.stock) <= 0 ? "Stok sedang kosong" : "Beli via WhatsApp"}
           >
             <ShoppingCart className="w-5 h-5 transition-transform group-hover/button:scale-110" />
-            <span>Beli via WA</span>
+            <span>{Number(product.stock) <= 0 ? "Stok Kosong" : "Beli via WA"}</span>
           </Button>
           
           {/* Detail Button */}
@@ -126,4 +136,3 @@ export default function ProductCard({ product, onBuy, onAddToCart, viewMode = 'g
     </Card>
   );
 }
-

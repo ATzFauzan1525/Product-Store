@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { 
@@ -51,6 +50,17 @@ export default function ProductDetail() {
   };
 
   const handleCheckout = () => {
+    // Validasi stok
+    if (Number(product.stock) <= 0) {
+      alert('❌ Stok sedang kosong. Mohon coba lagi nanti.');
+      return;
+    }
+
+    if (Number(quantity) > Number(product.stock)) {
+      alert(`❌ Jumlah pesanan (${quantity}) melebihi stok tersedia (${product.stock}).\n\nMohon periksa kembali.`);
+      return;
+    }
+
     const message = `Halo, saya ingin memesan/booking ${product.name}
 Jumlah: ${quantity}
 Total: ${formatPrice(product.price * quantity)}`;
@@ -180,41 +190,53 @@ Total: ${formatPrice(product.price * quantity)}`;
               <div className="flex items-center gap-3">
                 <Package className="w-5 h-5 text-green-600" />
                 <div>
-                  <p className="font-semibold text-gray-900">Stok Tersedia</p>
-                  <p className="text-sm text-gray-600">{product.stock} unit</p>
+                  <p className="font-semibold text-gray-900">{Number(product.stock) <= 0 ? 'Stok Kosong' : 'Stok Tersedia'}</p>
+                  <p className="text-sm text-gray-600">{Number(product.stock) <= 0 ? 'Produk ini sedang tidak tersedia' : `${product.stock} unit`}</p>
                 </div>
               </div>
             </div>
 
-            <div className="bg-white p-4 rounded-xl border border-gray-200">
-              <label className="block font-semibold text-gray-900 mb-3">Jumlah</label>
-              <div className="flex items-center gap-4">
-                <div className="flex items-center border border-gray-300 rounded-lg">
-                  <button
-                    onClick={() => setQuantity(Math.max(1, quantity - 1))}
-                    className="px-4 py-2 hover:bg-gray-50 transition-colors"
-                    disabled={quantity <= 1}
-                  >
-                    -
-                  </button>
-                  <span className="px-6 py-2 font-semibold border-x border-gray-300">
-                    {quantity}
+            {/* Deskripsi Produk */}
+            {product.description && (
+              <div className="bg-white p-6 rounded-xl border border-gray-200">
+                <h3 className="font-bold text-gray-900 mb-3 text-lg">Deskripsi Produk</h3>
+                <p className="text-gray-700 leading-relaxed">{product.description}</p>
+              </div>
+            )}
+
+            {Number(product.stock) > 0 && (
+              <div className="bg-white p-4 rounded-xl border border-gray-200">
+                <label className="block font-semibold text-gray-900 mb-3">Jumlah</label>
+                <div className="flex items-center gap-4">
+                  <div className="flex items-center border border-gray-300 rounded-lg">
+                    <button
+                      onClick={() => setQuantity(Math.max(1, quantity - 1))}
+                      className="px-4 py-2 hover:bg-gray-50 transition-colors"
+                      disabled={quantity <= 1}
+                    >
+                      -
+                    </button>
+                    <span className="px-6 py-2 font-semibold border-x border-gray-300">
+                      {quantity}
+                    </span>
+                    <button
+                      onClick={() => setQuantity(Math.min(product.stock, quantity + 1))}
+                      className="px-4 py-2 hover:bg-gray-50 transition-colors"
+                      disabled={quantity >= product.stock}
+                    >
+                      +
+                    </button>
+                  </div>
+                  <span className="text-sm text-gray-600">
+                    Maksimal {product.stock} unit
                   </span>
-                  <button
-                    onClick={() => setQuantity(Math.min(product.stock, quantity + 1))}
-                    className="px-4 py-2 hover:bg-gray-50 transition-colors"
-                    disabled={quantity >= product.stock}
-                  >
-                    +
-                  </button>
                 </div>
-                <span className="text-sm text-gray-600">
-                  Maksimal {product.stock} unit
-                </span>
               </div>
-            </div>
+            )}
 
-            <div className="bg-gradient-to-r from-green-50 to-emerald-50 p-4 rounded-xl border border-green-200">
+            <div className="bg-gradient-to-r from-green-50 to-emerald-50 p-4 rounded-xl border border-green-200" style={{
+              display: Number(product.stock) > 0 ? 'block' : 'none'
+            }}>
               <div className="flex items-center justify-between">
                 <span className="font-semibold text-gray-900">Total:</span>
                 <span className="text-2xl font-bold text-green-600">
@@ -226,10 +248,12 @@ Total: ${formatPrice(product.price * quantity)}`;
             <div className="space-y-3">
               <button
                 onClick={handleCheckout}
-                className="w-full bg-gradient-to-r from-green-600 to-green-700 text-white py-4 rounded-xl hover:from-green-700 hover:to-green-800 transition-all duration-300 font-bold text-lg shadow-lg shadow-green-500/30 hover:shadow-xl hover:shadow-green-500/40 flex items-center justify-center gap-3 transform hover:scale-105"
+                disabled={Number(product.stock) <= 0}
+                className="w-full bg-gradient-to-r from-green-600 to-green-700 text-white py-4 rounded-xl hover:from-green-700 hover:to-green-800 disabled:from-gray-400 disabled:to-gray-400 disabled:cursor-not-allowed transition-all duration-300 font-bold text-lg shadow-lg shadow-green-500/30 hover:shadow-xl hover:shadow-green-500/40 flex items-center justify-center gap-3 transform hover:scale-105"
+                title={Number(product.stock) <= 0 ? "Stok sedang kosong" : "Beli via WhatsApp"}
               >
                 <ShoppingCart className="w-6 h-6" />
-                Beli via WhatsApp
+                {Number(product.stock) <= 0 ? 'Stok Kosong' : 'Beli via WhatsApp'}
               </button>
               
               <Link
@@ -263,4 +287,3 @@ Total: ${formatPrice(product.price * quantity)}`;
     </div>
   );
 }
-
