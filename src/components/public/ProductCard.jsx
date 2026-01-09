@@ -1,11 +1,19 @@
 import { ShoppingCart, Package, Tag, Eye } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import { Card, CardContent } from '@/components/ui/card';
+import { useState } from 'react';
+import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import { reduceStockOnCheckout, generateOrderId } from '../../services/api';
+import OrderSuccessModal from '../OrderSuccessModal';
+import WhatsAppConfirmationModal from '../WhatsAppConfirmationModal';
 
 export default function ProductCard({ product, onBuy, onAddToCart, viewMode = 'grid', isHighlighted = false }) {
   const navigate = useNavigate();
+  const [isSuccessOpen, setIsSuccessOpen] = useState(false);
+  const [isWhatsAppConfirmOpen, setIsWhatsAppConfirmOpen] = useState(false);
+  const [isPendingConfirm, setIsPendingConfirm] = useState(false);
+  const [currentOrderId, setCurrentOrderId] = useState(null);
 
   const formatPrice = (price) => {
     return new Intl.NumberFormat('id-ID', {
@@ -15,7 +23,7 @@ export default function ProductCard({ product, onBuy, onAddToCart, viewMode = 'g
     }).format(price);
   };
 
-  const handleCheckout = () => {
+  const handleCheckout = async () => {
     // Validasi stok
     if (Number(product.stock) <= 0) {
       alert('❌ Stok sedang kosong. Mohon coba lagi nanti.');
@@ -23,7 +31,34 @@ export default function ProductCard({ product, onBuy, onAddToCart, viewMode = 'g
     }
 
     const message = `Halo, saya ingin memesan/booking ${product.name}`;
-    window.open(`https://wa.me/6287783273575?text=${encodeURIComponent(message)}`);
+    
+    // Open WhatsApp
+    window.open(`https://wa.me/6287783273575?text=${encodeURIComponent(message)}`, '_blank');
+
+    // Show confirmation modal
+    setIsWhatsAppConfirmOpen(true);
+  };
+
+  const handleConfirmWhatsAppOrder = async () => {
+    setIsPendingConfirm(true);
+    try {
+      await reduceStockOnCheckout([{ id: product.id, quantity: 1 }]);
+      const orderId = generateOrderId();
+      setCurrentOrderId(orderId);
+      setIsWhatsAppConfirmOpen(false);
+      setIsSuccessOpen(true);
+    } catch (err) {
+      console.error('Error reducing stock from ProductCard', err);
+      alert('⚠️ Pesanan dikirim ke WhatsApp, tapi ada kesalahan saat mengurangi stok.\n\nError: ' + (err?.message || err));
+      setIsWhatsAppConfirmOpen(false);
+    } finally {
+      setIsPendingConfirm(false);
+    }
+  };
+
+  const handleCancelWhatsAppOrder = () => {
+    alert('❌ Order dibatalkan.');
+    setIsWhatsAppConfirmOpen(false);
   };
 
   const handleViewDetails = (product) => {
@@ -69,13 +104,23 @@ export default function ProductCard({ product, onBuy, onAddToCart, viewMode = 'g
           </Badge>
         </div>
 
-        {/* Stock Badge */}
-        <div className="absolute top-4 right-4">
-          <Badge variant="secondary" className="flex items-center gap-1.5 bg-white/95 backdrop-blur-sm shadow-lg">
-            <Package className={`w-3.5 h-3.5 ${Number(product.stock) <= 0 ? 'text-red-600' : 'text-green-600'}`} />
-            <span className={`text-xs font-semibold ${Number(product.stock) <= 0 ? 'text-red-600' : 'text-gray-700'}`}>{Number(product.stock) <= 0 ? 'Stok Kosong' : product.stock}</span>
-          </Badge>
-        </div>
+        {/* Stok Badge dengan status */}
+        {Number(product.stock) <= 0 && (
+          <div className="absolute top-4 right-4">
+            <Badge className="flex items-center gap-1.5 bg-red-500 text-white shadow-lg">
+              <Package className="w-3.5 h-3.5" />
+              <span className="text-xs font-semibold">Stok Kosong</span>
+            </Badge>
+          </div>
+        )}
+        {Number(product.stock) > 0 && (
+          <div className="absolute top-4 right-4">
+            <Badge variant="secondary" className="flex items-center gap-1.5 bg-white/95 backdrop-blur-sm shadow-lg">
+              <Package className="w-3.5 h-3.5 text-green-600" />
+              <span className="text-xs font-semibold text-gray-700">{product.stock}</span>
+            </Badge>
+          </div>
+        )}
       </div>
 
       {/* Content */}
@@ -106,7 +151,6 @@ export default function ProductCard({ product, onBuy, onAddToCart, viewMode = 'g
             onClick={() => onAddToCart(product)}
             disabled={Number(product.stock) <= 0}
             className="px-4 py-3.5 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-xl hover:from-blue-700 hover:to-indigo-700 disabled:from-gray-400 disabled:to-gray-400 disabled:cursor-not-allowed transition-all duration-300 font-semibold shadow-lg shadow-blue-500/30 hover:shadow-xl hover:shadow-blue-500/40 flex items-center justify-center gap-2 group/button"
-            title={Number(product.stock) <= 0 ? "Stok sedang kosong" : "Tambah ke keranjang"}
           >
             <ShoppingCart className="w-5 h-5 transition-transform group-hover/button:scale-110" />
             <span>Tambah</span>
@@ -133,6 +177,32 @@ export default function ProductCard({ product, onBuy, onAddToCart, viewMode = 'g
           </button>
         </div>
       </div>
+
+      {/* Order Success Modal */}
+      <OrderSuccessModal
+        isOpen={isSuccessOpen}
+        onClose={() => {
+          setIsSuccessOpen(false);
+          // Scroll ke tampilan produk
+          setTimeout(() => {
+            const element = document.getElementById('products-section');
+            if (element) {
+              const top = element.getBoundingClientRect().top + window.scrollY - 100;
+              window.scrollTo({ top: top, behavior: 'smooth' });
+            }
+          }, 150);
+        }}
+        orderId={currentOrderId}
+      />
+
+      {/* WhatsApp Confirmation Modal */}
+      <WhatsAppConfirmationModal
+        isOpen={isWhatsAppConfirmOpen}
+        onConfirm={handleConfirmWhatsAppOrder}
+        onCancel={handleCancelWhatsAppOrder}
+        isProcessing={isPendingConfirm}
+      />
     </Card>
   );
 }
+

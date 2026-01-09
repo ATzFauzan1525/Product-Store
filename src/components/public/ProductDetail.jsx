@@ -11,7 +11,9 @@ import {
   Truck,
   Shield
 } from 'lucide-react';
-import { getProductById, formatProductFromApi } from '../../services/api';
+import { getProductById, formatProductFromApi, reduceStockOnCheckout, generateOrderId } from '../../services/api';
+import OrderSuccessModal from '../OrderSuccessModal';
+import WhatsAppConfirmationModal from '../WhatsAppConfirmationModal';
 
 export default function ProductDetail() {
   const { id } = useParams();
@@ -21,6 +23,10 @@ export default function ProductDetail() {
   const [error, setError] = useState(null);
   const [quantity, setQuantity] = useState(1);
   const [isWishlisted, setIsWishlisted] = useState(false);
+  const [isSuccessOpen, setIsSuccessOpen] = useState(false);
+  const [currentOrderId, setCurrentOrderId] = useState(null);
+  const [isWhatsAppConfirmOpen, setIsWhatsAppConfirmOpen] = useState(false);
+  const [isPendingConfirm, setIsPendingConfirm] = useState(false);
 
   useEffect(() => {
     const fetchProduct = async () => {
@@ -49,7 +55,7 @@ export default function ProductDetail() {
     }).format(price);
   };
 
-  const handleCheckout = () => {
+  const handleCheckout = async () => {
     // Validasi stok
     if (Number(product.stock) <= 0) {
       alert('❌ Stok sedang kosong. Mohon coba lagi nanti.');
@@ -64,7 +70,34 @@ export default function ProductDetail() {
     const message = `Halo, saya ingin memesan/booking ${product.name}
 Jumlah: ${quantity}
 Total: ${formatPrice(product.price * quantity)}`;
-    window.open(`https://wa.me/6287783273575?text=${encodeURIComponent(message)}`);
+    
+    // Open WhatsApp
+    window.open(`https://wa.me/6287783273575?text=${encodeURIComponent(message)}`, '_blank');
+
+    // Show confirmation modal
+    setIsWhatsAppConfirmOpen(true);
+  };
+
+  const handleConfirmWhatsAppOrder = async () => {
+    setIsPendingConfirm(true);
+    try {
+      await reduceStockOnCheckout([{ id: product.id, quantity: Number(quantity) }]);
+      const orderId = generateOrderId();
+      setCurrentOrderId(orderId);
+      setIsWhatsAppConfirmOpen(false);
+      setIsSuccessOpen(true);
+    } catch (err) {
+      console.error('Error reducing stock from ProductDetail:', err);
+      alert('⚠️ Pesanan dikirim ke WhatsApp, tapi ada kesalahan saat mengurangi stok.\n\nError: ' + (err?.message || err));
+      setIsWhatsAppConfirmOpen(false);
+    } finally {
+      setIsPendingConfirm(false);
+    }
+  };
+
+  const handleCancelWhatsAppOrder = () => {
+    alert('❌ Order dibatalkan.');
+    setIsWhatsAppConfirmOpen(false);
   };
 
   const handleShare = async () => {
@@ -186,9 +219,13 @@ Total: ${formatPrice(product.price * quantity)}`;
               <p className="text-sm text-gray-600 mt-1">Harga terbaik untuk Anda</p>
             </div>
 
-            <div className="bg-white p-4 rounded-xl border border-gray-200">
+            <div className={`bg-white p-4 rounded-xl border-2 ${
+              Number(product.stock) <= 0 
+                ? 'border-red-200 bg-red-50' 
+                : 'border-gray-200 bg-white'
+            }`}>
               <div className="flex items-center gap-3">
-                <Package className="w-5 h-5 text-green-600" />
+                <Package className={`w-5 h-5 ${Number(product.stock) <= 0 ? 'text-red-600' : 'text-green-600'}`} />
                 <div>
                   <p className="font-semibold text-gray-900">{Number(product.stock) <= 0 ? 'Stok Kosong' : 'Stok Tersedia'}</p>
                   <p className="text-sm text-gray-600">{Number(product.stock) <= 0 ? 'Produk ini sedang tidak tersedia' : `${product.stock} unit`}</p>
@@ -234,6 +271,14 @@ Total: ${formatPrice(product.price * quantity)}`;
               </div>
             )}
 
+            {Number(product.stock) <= 0 && (
+              <div className="bg-red-50 border-2 border-red-200 p-6 rounded-xl text-center">
+                <Package className="w-10 h-10 text-red-600 mx-auto mb-3" />
+                <h3 className="text-lg font-bold text-red-700 mb-2">Produk Sedang Tidak Tersedia</h3>
+                <p className="text-red-600 text-sm">Mohon kembali lagi nanti untuk melihat ketersediaan terbaru</p>
+              </div>
+            )}
+
             <div className="bg-gradient-to-r from-green-50 to-emerald-50 p-4 rounded-xl border border-green-200" style={{
               display: Number(product.stock) > 0 ? 'block' : 'none'
             }}>
@@ -264,6 +309,25 @@ Total: ${formatPrice(product.price * quantity)}`;
               </Link>
             </div>
 
+            {/* Order Success Modal */}
+            <OrderSuccessModal
+              isOpen={isSuccessOpen}
+              onClose={() => {
+                setIsSuccessOpen(false);
+                // Navigate ke halaman utama dan scroll ke produk
+                navigate('/?scrollToProducts=true', { replace: true });
+              }}
+              orderId={currentOrderId}
+            />
+
+            {/* WhatsApp Confirmation Modal */}
+            <WhatsAppConfirmationModal
+              isOpen={isWhatsAppConfirmOpen}
+              onConfirm={handleConfirmWhatsAppOrder}
+              onCancel={handleCancelWhatsAppOrder}
+              isProcessing={isPendingConfirm}
+            />
+
             <div className="bg-white p-6 rounded-xl border border-gray-200">
               <h3 className="font-bold text-gray-900 mb-4">Keunggulan Belanja</h3>
               <div className="space-y-3">
@@ -287,3 +351,4 @@ Total: ${formatPrice(product.price * quantity)}`;
     </div>
   );
 }
+
