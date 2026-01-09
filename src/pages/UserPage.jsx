@@ -1,16 +1,22 @@
 import { useState, useEffect, useRef } from 'react';
 import { Sparkles, TrendingUp, Star, X } from 'lucide-react';
+import { useSearchParams } from 'react-router-dom';
 import Navbar from '../components/public/Navbar';
 import ProductCard from '../components/public/ProductCard';
 import Footer from '../components/public/Footer';
 import FilterBar from '../components/public/FilterBar';
 import FilterModal from '../components/public/FilterModal';
 import CartModal from '../components/public/CartModal';
+import OrderConfirmationModal from '../components/OrderConfirmationModal';
+import OrderSuccessModal from '../components/OrderSuccessModal';
+import WhatsAppConfirmationModal from '../components/WhatsAppConfirmationModal';
 import { useProducts } from '../hooks/useProducts';
 import { useLocalStorage } from '../hooks/useLocalStorage';
+import { reduceStockOnCheckout, generateOrderId } from '../services/api';
 
 export default function UserPage() {
-  const { products, loading, error } = useProducts();
+  const [searchParams] = useSearchParams();
+  const { products, loading, error, refreshProducts } = useProducts();
   const [filteredProducts, setFilteredProducts] = useState([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('all');
@@ -21,8 +27,15 @@ export default function UserPage() {
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [selectedCartItems, setSelectedCartItems] = useState([]);
   const [isProcessingCheckout, setIsProcessingCheckout] = useState(false);
+  const [isConfirmationOpen, setIsConfirmationOpen] = useState(false);
+  const [isSuccessOpen, setIsSuccessOpen] = useState(false);
+  const [currentOrderId, setCurrentOrderId] = useState(null);
+  const [isWhatsAppConfirmOpen, setIsWhatsAppConfirmOpen] = useState(false);
+  const [isPendingConfirm, setIsPendingConfirm] = useState(false);
+  const [pendingCheckoutItems, setPendingCheckoutItems] = useState([]);
   const productRefs = useRef({});
   const [highlightedProduct, setHighlightedProduct] = useState(null);
+  const productsSectionRef = useRef(null);
 
   // Get unique categories
   const categories = ['all', ...new Set(products.map(p => p.category))];
@@ -75,6 +88,19 @@ export default function UserPage() {
   useEffect(() => {
     applyFilters();
   }, [products, searchQuery, selectedCategory, priceRange]);
+
+  // Handle scrollToProducts query parameter
+  useEffect(() => {
+    if (searchParams.get('scrollToProducts') === 'true' && productsSectionRef.current) {
+      setTimeout(() => {
+        const element = document.getElementById('products-section');
+        if (element) {
+          const top = element.getBoundingClientRect().top + window.scrollY - 100;
+          window.scrollTo({ top: top, behavior: 'smooth' });
+        }
+      }, 100);
+    }
+  }, [searchParams]);
 
   const handleSearch = (query) => {
     setSearchQuery(query);
@@ -188,16 +214,27 @@ export default function UserPage() {
       return;
     }
 
+    // Update cart items dengan stok terbaru dari products
+    const updatedSelectedItems = selectedItems.map(item => {
+      const latestProduct = products.find(p => p.id === item.id);
+      return {
+        ...item,
+        stock: latestProduct?.stock || item.stock
+      };
+    });
+
     // Cegah checkout jika ada item stok kosong atau quantity melebihi stok
-    const zeroStock = selectedItems.some(item => Number(item.stock) <= 0);
+    const zeroStock = updatedSelectedItems.some(item => Number(item.stock) <= 0);
     if (zeroStock) {
       alert('Ada produk yang stoknya kosong. Hapus atau perbarui stok sebelum checkout.');
       return;
     }
 
-    const overQty = selectedItems.some(item => Number(item.quantity) > Number(item.stock));
+    const overQty = updatedSelectedItems.some(item => Number(item.quantity) > Number(item.stock));
     if (overQty) {
-      alert('Ada produk yang jumlahnya melebihi stok tersedia. Periksa kembali keranjang Anda.');
+      const overItems = updatedSelectedItems.filter(item => Number(item.quantity) > Number(item.stock));
+      const details = overItems.map(item => `${item.name} (pesan: ${item.quantity}, stok: ${item.stock})`).join(', ');
+      alert(`Jumlah pesanan melebihi stok tersedia:\n${details}`);
       return;
     }
 
@@ -212,12 +249,12 @@ export default function UserPage() {
         }).format(price);
       };
 
-      const totalPrice = selectedItems.reduce((total, item) => total + (item.price * item.quantity), 0);
+      const totalPrice = updatedSelectedItems.reduce((total, item) => total + (item.price * item.quantity), 0);
 
       // Format pesan WhatsApp
       let message = `Halo, saya ingin memesan/booking produk berikut:\n\n`;
 
-      selectedItems.forEach((item, index) => {
+      updatedSelectedItems.forEach((item, index) => {
         message += `${index + 1}. ${item.name}\n`;
         message += `   - Harga: ${formatPrice(item.price)}\n`;
         message += `   - Jumlah: ${item.quantity}\n`;
@@ -227,15 +264,60 @@ export default function UserPage() {
       message += `Total Pembayaran: ${formatPrice(totalPrice)}\n\n`;
       message += `Mohon konfirmasi ketersediaan stok dan informasi pembayaran. Terima kasih!`;
 
+      // Open WhatsApp
       const whatsappUrl = `https://wa.me/6287783273575?text=${encodeURIComponent(message)}`;
       window.open(whatsappUrl, '_blank');
-      setIsCartOpen(false);
+
+      // Store checkout items and show confirmation modal
+      const checkoutData = updatedSelectedItems.map(item => ({
+        id: item.id,
+        quantity: item.quantity
+      }));
+      setPendingCheckoutItems(checkoutData);
+      setIsWhatsAppConfirmOpen(true);
+      setIsProcessingCheckout(false);
     } catch (error) {
       console.error('Error during checkout:', error);
-      alert('Terjadi kesalahan saat memproses checkout. Silakan coba lagi.');
-    } finally {
+      alert('❌ Terjadi kesalahan saat memproses checkout. Silakan coba lagi.\n\nError: ' + error.message);
       setIsProcessingCheckout(false);
     }
+  };
+
+  const handleConfirmWhatsAppOrder = async () => {
+    setIsPendingConfirm(true);
+    try {
+      await reduceStockOnCheckout(pendingCheckoutItems);
+      
+      // Remove checked out items from cart
+      const checkedOutIds = pendingCheckoutItems.map(i => i.id);
+      setCart(prevCart => prevCart.filter(item => !checkedOutIds.includes(item.id)));
+      setSelectedCartItems(prev => prev.filter(id => !checkedOutIds.includes(id)));
+      
+      // Refresh products
+      await refreshProducts();
+      
+      // Show confirmation
+      const orderId = generateOrderId();
+      setCurrentOrderId(orderId);
+      setIsWhatsAppConfirmOpen(false);
+      setIsSuccessOpen(true);
+      setIsCartOpen(false);
+      
+    } catch (stockError) {
+      console.error('Error reducing stock:', stockError);
+      await refreshProducts();
+      alert('⚠️ Pesanan dikirim ke WhatsApp, tapi ada kesalahan saat mengurangi stok.\n\nError: ' + (stockError?.message || stockError));
+      setIsWhatsAppConfirmOpen(false);
+    } finally {
+      setIsPendingConfirm(false);
+      setPendingCheckoutItems([]);
+    }
+  };
+
+  const handleCancelWhatsAppOrder = () => {
+    alert('❌ Order dibatalkan.');
+    setIsWhatsAppConfirmOpen(false);
+    setPendingCheckoutItems([]);
   };
 
   const hasActiveFilters = searchQuery || selectedCategory !== 'all' || 
@@ -415,7 +497,7 @@ export default function UserPage() {
       )}
       
       {/* Products Section */}
-      <div className="container mx-auto px-4 py-12 md:py-16">
+      <div id="products-section" ref={productsSectionRef} className="container mx-auto px-4 py-12 md:py-16">
         <div className="mb-10">
           <div className="flex items-center justify-between mb-6">
             <div>
@@ -533,20 +615,32 @@ export default function UserPage() {
         isProcessingCheckout={isProcessingCheckout}
       />
 
-      <Footer />
+      {/* Order Success Modal */}
+      <OrderSuccessModal 
+        isOpen={isSuccessOpen}
+        onClose={() => {
+          setIsSuccessOpen(false);
+          // Scroll ke tampilan produk dengan delay untuk tunggu modal close
+          setTimeout(() => {
+            const element = document.getElementById('products-section');
+            if (element) {
+              const top = element.getBoundingClientRect().top + window.scrollY - 100;
+              window.scrollTo({ top: top, behavior: 'smooth' });
+            }
+          }, 150);
+        }}
+        orderId={currentOrderId}
+      />
 
-      <style jsx>{`
-        @keyframes fadeInUp {
-          from {
-            opacity: 0;
-            transform: translateY(30px);
-          }
-          to {
-            opacity: 1;
-            transform: translateY(0);
-          }
-        }
-      `}</style>
+      {/* WhatsApp Confirmation Modal */}
+      <WhatsAppConfirmationModal
+        isOpen={isWhatsAppConfirmOpen}
+        onConfirm={handleConfirmWhatsAppOrder}
+        onCancel={handleCancelWhatsAppOrder}
+        isProcessing={isPendingConfirm}
+      />
+
+      <Footer />
     </div>
   );
 }
