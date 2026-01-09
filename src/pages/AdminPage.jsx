@@ -1,11 +1,12 @@
 import { useProducts } from '../hooks/useProducts';
 import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import Navbar from '../components/public/Navbar';
 import AdminHeader from '../components/admin/AdminHeader';
-import FormData from '../components/admin/FormData';
 import DataTable from '../components/admin/DataTable';
 
 export default function AdminPage() {
+  const navigate = useNavigate();
   
   // STATE PRODUCTS - menggunakan hook untuk mendapatkan data dari API dengan loading dan error states
   const { products, loading, error, addProduct, deleteProduct, refreshProducts } = useProducts();
@@ -14,22 +15,44 @@ export default function AdminPage() {
   const [cachedTotalStock, setCachedTotalStock] = useState(0);
   const [cachedInventoryValue, setCachedInventoryValue] = useState(0);
 
-  // Hitung cache saat products pertama kali load
+  // Hitung cache saat products berubah
   useEffect(() => {
-    if (products.length > 0 && cachedTotalStock === 0) {
+    if (products.length > 0) {
       const totalStock = products.reduce((sum, p) => sum + (Number(p.stock) || 0), 0);
       const inventoryValue = products.reduce((sum, p) => sum + ((Number(p.price) || 0) * (Number(p.stock) || 0)), 0);
       setCachedTotalStock(totalStock);
       setCachedInventoryValue(inventoryValue);
+    } else {
+      // Reset ke 0 jika tidak ada produk
+      setCachedTotalStock(0);
+      setCachedInventoryValue(0);
     }
-  }, [products, cachedTotalStock]);
+  }, [products]);
+
+  // Refresh data saat window mendapat focus (kembali dari halaman edit)
+  useEffect(() => {
+    const handleFocus = () => {
+      refreshProducts();
+    };
+
+    window.addEventListener('focus', handleFocus);
+    return () => window.removeEventListener('focus', handleFocus);
+  }, [refreshProducts]);
+
+  // Logout function
+  const handleLogout = () => {
+    sessionStorage.removeItem('adminToken');
+    sessionStorage.removeItem('adminUser');
+    navigate('/admin/login');
+  };
 
   // FUNGSI TAMBAH PRODUK via API
-  // Dipanggil dari FormData saat user submit form
+  // Dipanggil dari halaman tambah produk saat user submit form
   const handleAddProduct = async (newProduct) => {
     try {
       console.log('Menambah produk baru:', newProduct);
       await addProduct(newProduct);
+      refreshProducts(); // Refresh data setelah tambah produk
       alert('Produk berhasil ditambahkan!');
     } catch (err) {
       console.error('Error adding product:', err);
@@ -44,6 +67,7 @@ export default function AdminPage() {
       if (window.confirm('Apakah Anda yakin ingin menghapus produk ini?')) {
         console.log('Menghapus produk dengan ID:', id);
         await deleteProduct(id);
+        refreshProducts(); // Refresh data setelah hapus produk
         alert('Produk berhasil dihapus!');
       }
     } catch (err) {
@@ -99,55 +123,20 @@ export default function AdminPage() {
       <div className="container mx-auto px-4 py-8">
         
         {/* HEADER - banner besar dengan judul dashboard */}
-        <AdminHeader />
-        
-        {/* STATISTIK CARDS - 3 card berisi info ringkas */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
-          
-          {/* CARD 1: Total Produk */}
-          <div className="bg-white p-6 rounded-lg shadow-md">
-            <h3 className="text-blue-600 text-sm font-bold uppercase tracking-wide">Total Produk</h3>
-            {/* Hitung jumlah produk dari length array */}
-            <p className="text-3xl font-bold text-blue-700 mt-2">{products.length}</p>
-          </div>
-          
-          {/* CARD 2: Total Stok */}
-          <div className="bg-white p-6 rounded-lg shadow-md">
-            <h3 className="text-blue-600 text-sm font-bold uppercase tracking-wide">Total Stok</h3>
-            {/* Jumlahkan semua stok dari setiap produk menggunakan reduce */}
-            <p className="text-3xl font-bold text-blue-700 mt-2">
-              {cachedTotalStock}
-            </p>
-          </div>
-          
-          {/* CARD 3: Nilai Inventori */}
-          <div className="bg-white p-6 rounded-lg shadow-md">
-            <h3 className="text-blue-600 text-sm font-bold uppercase tracking-wide">Nilai Inventori</h3>
-            {/* Hitung total nilai: harga × stok untuk setiap produk */}
-            <p className="text-3xl font-bold text-blue-700 mt-2">
-              {new Intl.NumberFormat('id-ID', {
-                style: 'currency',
-                currency: 'IDR',
-                minimumFractionDigits: 0
-              }).format(cachedInventoryValue)}
-            </p>
-            <p className="text-xs text-gray-500 mt-1">
-              Total nilai semua produk × stok
-            </p>
-          </div>
-        </div>
+        <AdminHeader 
+          totalProducts={products.length}
+          totalStock={cachedTotalStock}
+          inventoryValue={cachedInventoryValue}
+          onLogout={handleLogout}
+        />
 
-        {/* FORM TAMBAH PRODUK 
-            Props onAddProduct dikirim ke FormData
-            Saat form di-submit, handleAddProduct akan dipanggil */}
-        <FormData onAddProduct={handleAddProduct} />
-        
-        {/* TABEL PRODUK 
+        {/* TABEL PRODUK
             Props products = array semua produk untuk ditampilkan
             Props onDelete = fungsi untuk menghapus produk */}
-        <DataTable 
-          products={products} 
+        <DataTable
+          products={products}
           onDelete={handleDelete}
+          onAddProduct={() => navigate('/admin/add')}
         />
       </div>
     </div>

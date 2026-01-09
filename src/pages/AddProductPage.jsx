@@ -29,9 +29,7 @@ export default function AddProductPage() {
       <div className="container mx-auto px-4 py-8">
         <div className="mb-6">
           <h1 className="text-3xl font-bold">Tambah Produk</h1>
-          <p className="text-sm text-gray-600">
-            Isi formulir untuk menambahkan produk baru.
-          </p>
+          <p className="text-sm text-gray-600">Isi formulir untuk menambahkan produk baru.</p>
         </div>
 
         <FormData onAddProduct={handleAdd} />
