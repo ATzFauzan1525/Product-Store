@@ -8,7 +8,15 @@ class ApiError extends Error {
   }
 }
 
+// Generate unique Order ID
+export const generateOrderId = () => {
+  const timestamp = Date.now().toString().slice(-6); // 6 digit dari timestamp
+  const random = Math.floor(Math.random() * 10000).toString().padStart(4, '0'); // 4 digit random
+  return `${timestamp}${random}`; // Total 10 digit
+};
+
 const fetchWithErrorHandling = async (url, options = {}) => {
+  // Helper function to fetch data with error handling
   const response = await fetch(url, {
     headers: {
       'Content-Type': 'application/json',
@@ -102,6 +110,46 @@ export const formatProductForApi = (product) => {
   };
   console.log('formatProductForApi output stock:', formatted.stock, typeof formatted.stock);
   return formatted;
+};
+
+// =====================
+// CHECKOUT OPERATIONS
+// =====================
+
+// Reduce stock for multiple products during checkout
+export const reduceStockOnCheckout = async (checkoutItems) => {
+  try {
+    console.log('=== START reduceStockOnCheckout ===');
+    console.log('Checkout items:', checkoutItems);
+    
+    // checkoutItems format: [{ id, quantity }, ...]
+    const promises = checkoutItems.map(async (item) => {
+      console.log(`Fetching product ${item.id}...`);
+      const product = await getProductById(item.id);
+      console.log(`Product ${item.id} current stock:`, product.stock);
+      
+      const newStock = Math.max(0, (Number(product.stock) || 0) - item.quantity);
+      console.log(`Reducing stock for ${item.id}: ${product.stock} - ${item.quantity} = ${newStock}`);
+      
+      const updatePayload = {
+        ...product,
+        stock: newStock
+      };
+      console.log(`Update payload for ${item.id}:`, updatePayload);
+      
+      const result = await updateProduct(item.id, updatePayload);
+      console.log(`Update result for ${item.id}:`, result);
+      return result;
+    });
+    
+    const results = await Promise.all(promises);
+    console.log('Stock reduced successfully:', results);
+    console.log('=== END reduceStockOnCheckout ===');
+    return results;
+  } catch (error) {
+    console.error('Error reducing stock:', error);
+    throw new ApiError(`Gagal mengurangi stok: ${error.message}`, error.status);
+  }
 };
 
 // =====================
