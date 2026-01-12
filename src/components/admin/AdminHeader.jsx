@@ -1,9 +1,10 @@
-import { TrendingUp, Package, Box, DollarSign, LogOut } from "lucide-react";
+import { TrendingUp, Package, Box, DollarSign, LogOut, ShoppingCart } from "lucide-react";
 
 export default function AdminHeader({
   totalProducts = 0,
   totalStock = 0,
   inventoryValue = 0,
+  totalSold = 0,
   onLogout,
 }) {
   return (
@@ -93,6 +94,17 @@ export default function AdminHeader({
               <p className="text-sm text-purple-100 font-medium">Status</p>
             </div>
             <p className="text-lg font-semibold">Online</p>
+          </div>
+
+          {/* Card Produk Terjual */}
+          <div className="bg-white bg-opacity-15 backdrop-blur-md px-6 py-4 rounded-xl border border-white border-opacity-20">
+            <div className="flex items-center gap-3 mb-2">
+              <ShoppingCart className="w-5 h-5 text-purple-100" />
+              <p className="text-sm text-purple-100 font-medium">
+                Produk Terjual
+              </p>
+            </div>
+            <p className="text-3xl font-bold">{totalSold}</p>
           </div>
         </div>
       </div>

@@ -66,6 +66,7 @@ export default function DataTable({ products = [], onDelete, onAddProduct }) {
               <TableHead>Deskripsi</TableHead>
               <TableHead>Harga</TableHead>
               <TableHead>Stok</TableHead>
+              <TableHead>Terjual</TableHead>
               <TableHead>Aksi</TableHead>
             </TableRow>
           </TableHeader>
@@ -99,6 +100,8 @@ export default function DataTable({ products = [], onDelete, onAddProduct }) {
                 </TableCell>
 
                 <TableCell>{product.stock} unit</TableCell>
+
+                <TableCell>{product.sold || 0} unit</TableCell>
 
                 <TableCell>
                   <div className="flex gap-2">

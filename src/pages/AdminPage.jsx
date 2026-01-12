@@ -13,7 +13,7 @@ export default function AdminPage() {
     useProducts();
 
   // STATE untuk total stok dan nilai inventori (dihitung saat products berubah)
-  const { totalStock, inventoryValue } = useMemo(() => {
+  const { totalStock, inventoryValue, totalSold } = useMemo(() => {
     if (products.length > 0) {
       const totalStock = products.reduce(
         (sum, p) => sum + (Number(p.stock) || 0),
@@ -23,9 +23,13 @@ export default function AdminPage() {
         (sum, p) => sum + (Number(p.price) || 0) * (Number(p.stock) || 0),
         0,
       );
-      return { totalStock, inventoryValue };
+      const totalSold = products.reduce(
+        (sum, p) => sum + (Number(p.sold) || 0),
+        0,
+      );
+      return { totalStock, inventoryValue, totalSold };
     } else {
-      return { totalStock: 0, inventoryValue: 0 };
+      return { totalStock: 0, inventoryValue: 0, totalSold: 0 };
     }
   }, [products]);
 
@@ -111,6 +115,7 @@ export default function AdminPage() {
           totalProducts={products.length}
           totalStock={totalStock}
           inventoryValue={inventoryValue}
+          totalSold={totalSold}
           onLogout={handleLogout}
         />
 
