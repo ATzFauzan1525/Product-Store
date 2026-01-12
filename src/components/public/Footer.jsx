@@ -7,7 +7,6 @@ export default function Footer() {
       <div className="relative bg-slate-950 text-slate-300 border-t border-blue-900/30">
         <div className="max-w-7xl mx-auto px-6 py-14">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
-
             {/* BRAND */}
             <div>
               <h3 className="text-2xl font-extrabold tracking-tight mb-4">
@@ -53,12 +52,13 @@ export default function Footer() {
                 </li>
               </ul>
             </div>
-
           </div>
 
           {/* COPYRIGHT */}
           <div className="mt-14 border-t border-slate-800 pt-6 text-center text-xs text-slate-500">
-            © 2025 <span className="text-slate-300 font-medium">ProductStore</span>. All rights reserved.
+            © 2025{" "}
+            <span className="text-slate-300 font-medium">ProductStore</span>.
+            All rights reserved.
           </div>
         </div>
       </div>

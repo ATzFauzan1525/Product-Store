@@ -1,115 +1,176 @@
-// FormData.jsx
-// FILE INI BERTUGAS: Menampilkan form untuk menambah produk baru
-// User input nama, harga, kategori, stok, dan gambar produk di sini
-
-import { useState } from 'react';
-import { PlusCircle, Package, DollarSign, Box, Tag, Image } from 'lucide-react';
+import { useState } from "react";
+import {
+  PlusCircle,
+  Package,
+  DollarSign,
+  Box,
+  Tag,
+  Image,
+  FileText,
+} from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 
 // Props: onAddProduct = fungsi dari parent (AdminPage) untuk menambah produk
 export default function FormData({ onAddProduct }) {
-  
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
   // STATE FORM - menyimpan data yang user ketik di form
   const [formData, setFormData] = useState({
-    name: '',      // nama produk
-    price: '',     // harga produk
-    category: '',  // kategori produk
-    stock: '',     // jumlah stok
-    image: ''      // URL gambar produk
+    name: "", // nama produk
+    price: "", // harga produk
+    category: "", // kategori produk
+    stock: "", // jumlah stok
+    description: "", // deskripsi produk
+    image: "", // URL gambar produk
   });
 
+  // Tambah isAvailable flag: kalau tidak dicentang, stok otomatis 0
+  const [isAvailable, setIsAvailable] = useState(true);
+
   // FUNGSI SUBMIT - dipanggil saat tombol "Tambah Produk" diklik
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault(); // Mencegah reload halaman
-    
-    // Buat objek produk baru dari data form
-    const newProduct = {
-      name: formData.name,
-      price: Number(formData.price),        // Ubah string jadi number
-      category: formData.category,
-      stock: Number(formData.stock),        // Ubah string jadi number
-      image: formData.image || 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=400' // Pakai gambar default jika kosong
-    };
-    
-    // Kirim produk baru ke parent component (AdminPage)
-    onAddProduct(newProduct);
-    console.log('Product added:', newProduct);
-    
-    // RESET FORM - kosongkan semua input setelah submit
-    setFormData({
-      name: '',
-      price: '',
-      category: '',
-      stock: '',
-      image: ''
-    });
+
+    // VALIDASI FORM - pastikan semua field required sudah diisi
+    if (!formData.name.trim()) {
+      alert("Nama produk harus diisi!");
+      return;
+    }
+
+    if (!formData.price || Number(formData.price) <= 0) {
+      alert("Harga produk harus diisi dan lebih dari 0!");
+      return;
+    }
+
+    if (!formData.category.trim()) {
+      alert("Kategori produk harus diisi!");
+      return;
+    }
+
+    if (isAvailable && (!formData.stock || Number(formData.stock) < 0)) {
+      alert("Stok produk harus diisi dan tidak boleh negatif!");
+      return;
+    }
+
+    if (!formData.description.trim()) {
+      alert("Deskripsi produk harus diisi!");
+      return;
+    }
+
+    // Set loading state
+    setIsSubmitting(true);
+
+    try {
+      // Buat objek produk baru dari data form
+      const newProduct = {
+        name: formData.name,
+        price: Number(formData.price), // Ubah string jadi number
+        category: formData.category,
+        stock: isAvailable ? Number(formData.stock) : 0, // Jika tidak tersedia, stok = 0
+        description: formData.description,
+        image:
+          formData.image ||
+          "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=400", // Pakai gambar default jika kosong
+      };
+
+      // Kirim produk baru ke parent component (AdminPage)
+      await onAddProduct({ ...newProduct, isAvailable });
+
+      // RESET FORM - kosongkan semua input setelah submit berhasil
+      setFormData({
+        name: "",
+        price: "",
+        category: "",
+        stock: "",
+        description: "",
+        image: "",
+      });
+      setIsAvailable(true);
+    } catch {
+      // Error handling is done in parent component
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   // FUNGSI HANDLE CHANGE - dipanggil setiap kali user mengetik di input
   const handleChange = (e) => {
     setFormData({
-      ...formData,                      // Copy data lama
-      [e.target.name]: e.target.value   // Update field yang berubah
+      ...formData, // Copy data lama
+      [e.target.name]: e.target.value, // Update field yang berubah
     });
   };
 
   return (
     // CONTAINER FORM dengan border dan shadow
-    <div className="bg-white rounded-2xl shadow-xl mb-8 overflow-hidden border border-gray-100">
-      
-      {/* HEADER FORM - background biru dengan judul */}
-      <div className="bg-gradient-to-r from-blue-600 to-blue-700 p-6 border-b border-blue-800">
-        <div className="flex items-center gap-3">
-          {/* Icon form */}
-          <div className="bg-white/20 backdrop-blur-sm p-2 rounded-lg">
-            <PlusCircle className="w-5 h-5 text-white" />
+    <div className="bg-gradient-to-br from-white via-blue-50/30 to-blue-100/40 rounded-3xl shadow-2xl mb-8 overflow-hidden border-2 border-white backdrop-blur-sm">
+      {/* HEADER FORM - background gradient biru */}
+      <div className="relative bg-gradient-to-r from-blue-600 via-blue-500 to-blue-700 p-8 overflow-hidden">
+        {/* Decorative elements */}
+        <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full blur-3xl"></div>
+        <div className="absolute bottom-0 left-0 w-48 h-48 bg-blue-400/20 rounded-full blur-2xl"></div>
+
+        <div className="relative flex items-center gap-4">
+          {/* Icon form dengan animasi */}
+          <div className="bg-white/20 backdrop-blur-md p-3 rounded-2xl shadow-lg border border-white/30">
+            <PlusCircle className="w-7 h-7 text-white" />
           </div>
           <div>
-            <h2 className="text-2xl font-bold text-white">Tambah Produk Baru</h2>
-            <p className="text-sm text-blue-100 mt-1">Lengkapi formulir untuk menambahkan produk</p>
+            <h2 className="text-3xl font-black text-white tracking-tight">
+              Tambah Produk Baru
+            </h2>
+            <p className="text-base text-blue-100 mt-1 font-medium">
+              Lengkapi formulir untuk menambahkan produk
+            </p>
           </div>
         </div>
       </div>
-      
+
       {/* ISI FORM - semua input field */}
-      <div className="p-6 space-y-5">
-        
+      <div className="p-8 space-y-6">
         {/* INPUT NAMA PRODUK */}
         <div className="group">
-          <label className="flex items-center gap-2 text-sm font-semibold text-gray-700 mb-2">
-            <Package className="w-4 h-4 text-indigo-600" />
+          <label className="flex items-center gap-2 text-sm font-bold text-gray-800 mb-3">
+            <div className="p-1.5 bg-gradient-to-br from-blue-500 to-blue-600 rounded-lg">
+              <Package className="w-4 h-4 text-white" />
+            </div>
             Nama Produk
           </label>
-          <input
+          <Input
             type="text"
-            name="name"                    // name harus sama dengan key di state
-            value={formData.name}          // value diambil dari state
-            onChange={handleChange}        // update state saat user ketik
-            required                       // wajib diisi
-            className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all duration-200 hover:border-gray-300"
+            name="name"
+            value={formData.name}
+            onChange={handleChange}
+            required
             placeholder="Masukkan nama produk"
+            className="h-14 px-5 text-base font-medium border-2 border-gray-200 rounded-2xl focus:ring-4 focus:ring-blue-500/20 focus:border-blue-500 transition-all duration-300 hover:border-gray-300 hover:shadow-lg bg-white"
           />
         </div>
 
         {/* GRID 2 KOLOM - Harga & Stok bersebelahan */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-          
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {/* INPUT HARGA */}
           <div className="group">
-            <label className="flex items-center gap-2 text-sm font-semibold text-gray-700 mb-2">
-              <DollarSign className="w-4 h-4 text-green-600" />
-              Harga (Rp)
+            <label className="flex items-center gap-2 text-sm font-bold text-gray-800 mb-3">
+              <div className="p-1.5 bg-gradient-to-br from-blue-500 to-blue-600 rounded-lg">
+                <DollarSign className="w-4 h-4 text-white" />
+              </div>
+              Harga
             </label>
             <div className="relative">
               {/* Label "Rp" di dalam input sebelah kiri */}
-              <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 font-semibold">Rp</span>
-              <input
+              <span className="absolute left-5 top-1/2 -translate-y-1/2 text-gray-600 font-bold text-lg z-10">
+                Rp
+              </span>
+              <Input
                 type="number"
                 name="price"
                 value={formData.price}
                 onChange={handleChange}
                 required
-                min="0"                     // harga minimal 0
-                className="w-full pl-12 pr-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-all duration-200 hover:border-gray-300"
+                min="0"
+                className="h-14 pl-16 pr-5 text-base font-semibold border-2 border-gray-200 rounded-2xl focus:ring-4 focus:ring-blue-500/20 focus:border-blue-500 transition-all duration-300 hover:border-gray-300 hover:shadow-lg bg-white"
                 placeholder="0"
               />
             </div>
@@ -117,72 +178,141 @@ export default function FormData({ onAddProduct }) {
 
           {/* INPUT STOK */}
           <div className="group">
-            <label className="flex items-center gap-2 text-sm font-semibold text-gray-700 mb-2">
-              <Box className="w-4 h-4 text-blue-600" />
+            <label className="flex items-center gap-2 text-sm font-bold text-gray-800 mb-3">
+              <div className="p-1.5 bg-gradient-to-br from-blue-500 to-blue-600 rounded-lg">
+                <Box className="w-4 h-4 text-white" />
+              </div>
               Stok
             </label>
             <div className="relative">
-              <input
+              <Input
                 type="number"
                 name="stock"
                 value={formData.stock}
                 onChange={handleChange}
-                required
-                min="0"                     // stok minimal 0
-                className="w-full px-4 pr-16 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 hover:border-gray-300"
+                required={isAvailable}
+                min="0"
+                disabled={!isAvailable}
+                className="h-14 px-5 pr-20 text-base font-semibold border-2 border-gray-200 rounded-2xl focus:ring-4 focus:ring-blue-500/20 focus:border-blue-500 transition-all duration-300 hover:border-gray-300 hover:shadow-lg bg-white"
                 placeholder="0"
               />
               {/* Label "unit" di dalam input sebelah kanan */}
-              <span className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500 text-sm font-medium">unit</span>
+              <span className="absolute right-5 top-1/2 -translate-y-1/2 text-gray-600 text-base font-bold">
+                unit
+              </span>
             </div>
           </div>
         </div>
 
-        {/* SELECT KATEGORI - dropdown pilihan */}
+        {/* Availability Checkbox */}
+        <div className="flex items-center gap-3">
+          <input
+            id="isAvailable"
+            name="isAvailable"
+            type="checkbox"
+            checked={isAvailable}
+            onChange={(e) => {
+              const checked = e.target.checked;
+              setIsAvailable(checked);
+              if (!checked) {
+                setFormData((prev) => ({ ...prev, stock: "0" }));
+              } else {
+                setFormData((prev) => ({ ...prev, stock: "" }));
+              }
+            }}
+            className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded"
+          />
+          <label
+            htmlFor="isAvailable"
+            className="text-sm font-medium text-gray-800"
+          >
+            Produk tersedia (centang untuk mengisi stok)
+          </label>
+        </div>
+
+        {/* INPUT KATEGORI - sekarang text input */}
         <div className="group">
-          <label className="flex items-center gap-2 text-sm font-semibold text-gray-700 mb-2">
-            <Tag className="w-4 h-4 text-purple-600" />
+          <label className="flex items-center gap-2 text-sm font-bold text-gray-800 mb-3">
+            <div className="p-1.5 bg-gradient-to-br from-blue-500 to-blue-600 rounded-lg">
+              <Tag className="w-4 h-4 text-white" />
+            </div>
             Kategori
           </label>
-          <select
+          <Input
+            type="text"
             name="category"
             value={formData.category}
             onChange={handleChange}
             required
-            className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-all duration-200 hover:border-gray-300 bg-white"
-          >
-            <option value="">Pilih Kategori</option>
-            <option value="Electronics">🔌 Electronics</option>
-            <option value="Audio">🎧 Audio</option>
-            <option value="Wearables">⌚ Wearables</option>
-            <option value="Camera">📷 Camera</option>
-          </select>
+            placeholder="Contoh: Electronics, Audio, Wearables"
+            className="h-14 px-5 text-base font-medium border-2 border-gray-200 rounded-2xl focus:ring-4 focus:ring-blue-500/20 focus:border-blue-500 transition-all duration-300 hover:border-gray-300 hover:shadow-lg bg-white"
+          />
+        </div>
+
+        {/* INPUT DESKRIPSI - textarea */}
+        <div className="group">
+          <label className="flex items-center gap-2 text-sm font-bold text-gray-800 mb-3">
+            <div className="p-1.5 bg-gradient-to-br from-blue-500 to-blue-600 rounded-lg">
+              <FileText className="w-4 h-4 text-white" />
+            </div>
+            Deskripsi Produk
+          </label>
+          <textarea
+            name="description"
+            value={formData.description}
+            onChange={handleChange}
+            required
+            rows="4"
+            placeholder="Jelaskan detail produk, fitur, dan spesifikasinya..."
+            className="w-full px-5 py-4 text-base font-medium border-2 border-gray-200 rounded-2xl focus:ring-4 focus:ring-blue-500/20 focus:border-blue-500 transition-all duration-300 hover:border-gray-300 hover:shadow-lg bg-white resize-none"
+          />
         </div>
 
         {/* INPUT URL GAMBAR - opsional */}
         <div className="group">
-          <label className="flex items-center gap-2 text-sm font-semibold text-gray-700 mb-2">
-            <Image className="w-4 h-4 text-pink-600" />
-            URL Gambar <span className="text-gray-400 font-normal">(opsional)</span>
+          <label className="flex items-center gap-2 text-sm font-bold text-gray-800 mb-3">
+            <div className="p-1.5 bg-gradient-to-br from-blue-500 to-blue-600 rounded-lg">
+              <Image className="w-4 h-4 text-white" />
+            </div>
+            URL Gambar{" "}
+            <span className="text-gray-400 font-medium ml-1">(opsional)</span>
           </label>
-          <input
+          <Input
             type="url"
             name="image"
             value={formData.image}
             onChange={handleChange}
-            className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-pink-500 focus:border-pink-500 transition-all duration-200 hover:border-gray-300"
             placeholder="https://example.com/image.jpg"
+            className="h-14 px-5 text-base font-medium border-2 border-gray-200 rounded-2xl focus:ring-4 focus:ring-blue-500/20 focus:border-blue-500 transition-all duration-300 hover:border-gray-300 hover:shadow-lg bg-white"
           />
         </div>
 
-        {/* TOMBOL SUBMIT - mengirim form */}
-        <button
+        {/* TOMBOL SUBMIT - super modern dengan gradient biru dan animasi */}
+        <Button
           onClick={handleSubmit}
-          className="w-full bg-gradient-to-r from-blue-800 via-blue-600 to-blue-400 text-white py-4 rounded-xl hover:from-blue-900 hover:via-blue-700 hover:to-blue-500 transition-all duration-200 font-bold text-lg shadow-lg hover:shadow-xl transform hover:scale-[1.02] flex items-center justify-center gap-2"
+          disabled={isSubmitting}
+          className="group relative w-full h-16 bg-gradient-to-r from-blue-600 via-blue-500 to-blue-700 hover:from-blue-700 hover:via-blue-600 hover:to-blue-800 text-white rounded-2xl transition-all duration-500 font-black text-lg shadow-2xl hover:shadow-blue-500/50 transform hover:scale-[1.02] hover:-translate-y-1 flex items-center justify-center gap-3 overflow-hidden border-0"
         >
-          <PlusCircle className="w-5 h-5" />
-          Tambah Produk
-        </button>
+          {/* Shine effect */}
+          <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000"></div>
+
+          {/* Pulse background */}
+          <div className="absolute inset-0 bg-white/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+
+          {isSubmitting ? (
+            <>
+              <div className="animate-spin rounded-full h-6 w-6 border-3 border-white border-t-transparent relative z-10"></div>
+              <span className="relative z-10 tracking-wide">
+                Menambah Produk...
+              </span>
+            </>
+          ) : (
+            <>
+              <PlusCircle className="w-6 h-6 relative z-10 group-hover:rotate-90 group-hover:scale-110 transition-all duration-500" />
+              <span className="relative z-10 tracking-wide">Tambah Produk</span>
+            </>
+          )}
+        </Button>
       </div>
     </div>
   );
