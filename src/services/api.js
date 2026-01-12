@@ -93,6 +93,8 @@ export const formatProductFromApi = (product) => {
       product.stock === ""
         ? 0 // Default to 0 instead of random
         : Number(product.stock),
+    // Track total products sold
+    sold: Number(product.sold) || 0,
   };
   return formatted;
 };
@@ -107,6 +109,7 @@ export const formatProductForApi = (product) => {
     image: product.image,
     isAvailable: product.isAvailable,
     stock: product.stock,
+    sold: product.sold || 0,
   };
   return formatted;
 };
@@ -128,9 +131,12 @@ export const reduceStockOnCheckout = async (checkoutItems) => {
         (Number(product.stock) || 0) - item.quantity,
       );
 
+      const newSold = (Number(product.sold) || 0) + item.quantity;
+
       const updatePayload = {
         ...product,
         stock: newStock,
+        sold: newSold,
       };
 
       const result = await updateProduct(item.id, updatePayload);

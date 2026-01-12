@@ -2,7 +2,7 @@
   "name": "product-store",
   "private": true,
   "version": "0.0.0",
-  "homepage": "https://ATzFauzan1525.github.io/Product-Store",
+  "homepage": ".",
   "type": "module",
   "scripts": {
     "dev": "vite",
