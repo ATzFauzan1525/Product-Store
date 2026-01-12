@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Product Store - Katalog Produk Modern</title>
+  <script>
+    (function() {
+      var path = window.location.pathname;
+      // Remove /Product-Store prefix if present
+      var repo = '/Product-Store';
+      if (path.startsWith(repo)) {
+        path = path.substring(repo.length);
+      }
+      // Redirect to the main index.html with the original path
+      window.location.replace(repo + '/index.html' + (path ? '#!' + path : ''));
+    })();
+  </script>
+</head>
+<body>
+  <p>Redirecting...</p>
+</body>
+</html>
+
