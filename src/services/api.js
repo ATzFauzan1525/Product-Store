@@ -93,8 +93,13 @@ export const formatProductFromApi = (product) => {
       product.stock === ""
         ? 0 // Default to 0 instead of random
         : Number(product.stock),
-    // Track total products sold
-    sold: Number(product.sold) || 0,
+    // Sold field - default to 0
+    sold:
+      product.sold === undefined ||
+      product.sold === null ||
+      product.sold === ""
+        ? 0
+        : Number(product.sold),
   };
   return formatted;
 };
@@ -130,7 +135,6 @@ export const reduceStockOnCheckout = async (checkoutItems) => {
         0,
         (Number(product.stock) || 0) - item.quantity,
       );
-
       const newSold = (Number(product.sold) || 0) + item.quantity;
 
       const updatePayload = {

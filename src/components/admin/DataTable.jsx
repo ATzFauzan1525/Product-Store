@@ -101,9 +101,7 @@ export default function DataTable({ products = [], onDelete, onAddProduct }) {
 
                 <TableCell>{product.stock} unit</TableCell>
 
-                <TableCell className="font-semibold text-green-600">
-                  {product.sold || 0} unit
-                </TableCell>
+                <TableCell>{product.sold || 0} unit</TableCell>
 
                 <TableCell>
                   <div className="flex gap-2">
