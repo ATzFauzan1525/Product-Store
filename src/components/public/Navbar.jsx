@@ -1,7 +1,12 @@
 import { Link, NavLink } from "react-router-dom";
-import { Search, ShoppingCart } from 'lucide-react';
+import { Search, ShoppingCart } from "lucide-react";
 
-export default function Navbar({ searchQuery, onSearch, cart = [], onCartClick }) {
+export default function Navbar({
+  searchQuery,
+  onSearch,
+  cart = [],
+  onCartClick,
+}) {
   const cartItemCount = cart.reduce((total, item) => total + item.quantity, 0);
   return (
     <nav className="sticky top-0 z-50">
@@ -11,7 +16,6 @@ export default function Navbar({ searchQuery, onSearch, cart = [], onCartClick }
       <div className="relative bg-white/80 backdrop-blur-xl border-b border-blue-100 shadow-lg">
         <div className="max-w-7xl mx-auto px-6">
           <div className="flex h-16 items-center justify-between">
-            
             {/* LOGO */}
             <Link
               to="/"
@@ -60,7 +64,7 @@ export default function Navbar({ searchQuery, onSearch, cart = [], onCartClick }
               >
                 Katalog
               </NavLink>
-              
+
               {/* Cart Icon */}
               <div className="relative">
                 <button
@@ -70,7 +74,7 @@ export default function Navbar({ searchQuery, onSearch, cart = [], onCartClick }
                   <ShoppingCart className="w-6 h-6" />
                   {cartItemCount > 0 && (
                     <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center">
-                      {cartItemCount > 99 ? '99+' : cartItemCount}
+                      {cartItemCount > 99 ? "99+" : cartItemCount}
                     </span>
                   )}
                 </button>

@@ -1,46 +1,54 @@
-import { useState, useEffect } from 'react';
-import { X, Save, Package, DollarSign, Box, Tag, Image } from 'lucide-react';
+import { useState, useEffect, useMemo } from "react";
+import { X, Save, Package, DollarSign, Box, Tag, Image } from "lucide-react";
 
 export default function EditModal({ isOpen, onClose, product, onSave }) {
-  const [formData, setFormData] = useState({
-    name: '',
-    price: '',
-    category: '',
-    stock: '',
-    description: '',
-    image: '',
-    isAvailable: true
-  });
-
-  // Update form data ketika product berubah atau modal dibuka
-  useEffect(() => {
+  const initialFormData = useMemo(() => {
     if (product) {
-      setFormData({
-        name: product.name || '',
-        price: product.price?.toString() || '',
-        category: product.category || '',
-        stock: product.stock?.toString() || '',
-        description: product.description || '',
-        image: product.image || '',
-        isAvailable: product.isAvailable !== undefined ? product.isAvailable : true
-      });
+      return {
+        name: product.name || "",
+        price: product.price?.toString() || "",
+        category: product.category || "",
+        stock: product.stock?.toString() || "",
+        description: product.description || "",
+        image: product.image || "",
+        isAvailable:
+          product.isAvailable !== undefined ? product.isAvailable : true,
+      };
     }
-  }, [product, isOpen]);
+    return {
+      name: "",
+      price: "",
+      category: "",
+      stock: "",
+      description: "",
+      image: "",
+      isAvailable: true,
+    };
+  }, [product]);
+
+  const [formData, setFormData] = useState(initialFormData);
+
+  // Reset form data ketika modal dibuka dengan product baru
+  useEffect(() => {
+    setFormData(initialFormData);
+  }, [initialFormData]);
 
   // Handle form submission
   const handleSubmit = (e) => {
     e.preventDefault();
-    
+
     const updatedProduct = {
       name: formData.name,
       price: Number(formData.price),
       category: formData.category,
       stock: Number(formData.stock),
       description: formData.description,
-      image: formData.image || 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=400',
-      isAvailable: formData.isAvailable
+      image:
+        formData.image ||
+        "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=400",
+      isAvailable: formData.isAvailable,
     };
-    
+
     onSave(product.id, updatedProduct);
     onClose();
   };
@@ -49,7 +57,7 @@ export default function EditModal({ isOpen, onClose, product, onSave }) {
   const handleChange = (e) => {
     setFormData({
       ...formData,
-      [e.target.name]: e.target.value
+      [e.target.name]: e.target.value,
     });
   };
 
@@ -58,14 +66,14 @@ export default function EditModal({ isOpen, onClose, product, onSave }) {
   return (
     <>
       {/* Backdrop */}
-      <div 
+      <div
         className="fixed inset-0 bg-black/50 backdrop-blur-sm z-40 transition-opacity"
         onClick={onClose}
       />
-      
+
       {/* Modal */}
       <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-        <div 
+        <div
           className="bg-white rounded-2xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto"
           onClick={(e) => e.stopPropagation()}
         >
@@ -78,7 +86,9 @@ export default function EditModal({ isOpen, onClose, product, onSave }) {
                 </div>
                 <div>
                   <h2 className="text-2xl font-bold text-white">Edit Produk</h2>
-                  <p className="text-sm text-blue-100 mt-1">Ubah detail produk yang sudah ada</p>
+                  <p className="text-sm text-blue-100 mt-1">
+                    Ubah detail produk yang sudah ada
+                  </p>
                 </div>
               </div>
               <button
@@ -92,14 +102,16 @@ export default function EditModal({ isOpen, onClose, product, onSave }) {
 
           {/* Form Content */}
           <div className="p-6 space-y-5">
-            
             {/* Product Info Display */}
             <div className="bg-gray-50 p-4 rounded-xl border border-gray-200">
-              <p className="text-sm text-gray-600 mb-2">ID Produk: <span className="font-bold text-blue-600">#{product?.id}</span></p>
+              <p className="text-sm text-gray-600 mb-2">
+                ID Produk:{" "}
+                <span className="font-bold text-blue-600">#{product?.id}</span>
+              </p>
               <p className="text-sm text-gray-600">Foto saat ini:</p>
               {product?.image && (
-                <img 
-                  src={product.image} 
+                <img
+                  src={product.image}
                   alt={product.name}
                   className="w-16 h-16 rounded-lg object-cover mt-2 border border-gray-300"
                 />
@@ -125,7 +137,6 @@ export default function EditModal({ isOpen, onClose, product, onSave }) {
 
             {/* GRID 2 KOLOM - Harga & Stok */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-              
               {/* INPUT HARGA */}
               <div className="group">
                 <label className="flex items-center gap-2 text-sm font-semibold text-gray-700 mb-2">
@@ -133,7 +144,9 @@ export default function EditModal({ isOpen, onClose, product, onSave }) {
                   Harga (Rp)
                 </label>
                 <div className="relative">
-                  <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 font-semibold">Rp</span>
+                  <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 font-semibold">
+                    Rp
+                  </span>
                   <input
                     type="number"
                     name="price"
@@ -164,7 +177,9 @@ export default function EditModal({ isOpen, onClose, product, onSave }) {
                     className="w-full px-4 pr-16 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 hover:border-gray-300"
                     placeholder="0"
                   />
-                  <span className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500 text-sm font-medium">unit</span>
+                  <span className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500 text-sm font-medium">
+                    unit
+                  </span>
                 </div>
               </div>
             </div>
@@ -216,10 +231,14 @@ export default function EditModal({ isOpen, onClose, product, onSave }) {
                   type="checkbox"
                   name="isAvailable"
                   checked={formData.isAvailable}
-                  onChange={(e) => setFormData({ ...formData, isAvailable: e.target.checked })}
+                  onChange={(e) =>
+                    setFormData({ ...formData, isAvailable: e.target.checked })
+                  }
                   className="w-5 h-5 text-green-600 bg-gray-100 border-gray-300 rounded focus:ring-green-500 focus:ring-2"
                 />
-                <span className="text-gray-700">Produk tersedia untuk dijual</span>
+                <span className="text-gray-700">
+                  Produk tersedia untuk dijual
+                </span>
               </div>
             </div>
 
@@ -227,7 +246,8 @@ export default function EditModal({ isOpen, onClose, product, onSave }) {
             <div className="group">
               <label className="flex items-center gap-2 text-sm font-semibold text-gray-700 mb-2">
                 <Image className="w-4 h-4 text-pink-600" />
-                URL Gambar <span className="text-gray-400 font-normal">(opsional)</span>
+                URL Gambar{" "}
+                <span className="text-gray-400 font-normal">(opsional)</span>
               </label>
               <input
                 type="url"
@@ -261,4 +281,3 @@ export default function EditModal({ isOpen, onClose, product, onSave }) {
     </>
   );
 }
-

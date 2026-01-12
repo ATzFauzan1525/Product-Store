@@ -1,24 +1,28 @@
-// FormData.jsx
-// FILE INI BERTUGAS: Menampilkan form untuk menambah produk baru
-// User input nama, harga, kategori, stok, deskripsi, dan gambar produk di sini
-
-import { useState } from 'react';
-import { PlusCircle, Package, DollarSign, Box, Tag, Image, FileText } from 'lucide-react';
-import { Input } from "../ui/input";
-import { Button } from "../ui/button";
+import { useState } from "react";
+import {
+  PlusCircle,
+  Package,
+  DollarSign,
+  Box,
+  Tag,
+  Image,
+  FileText,
+} from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 
 // Props: onAddProduct = fungsi dari parent (AdminPage) untuk menambah produk
 export default function FormData({ onAddProduct }) {
   const [isSubmitting, setIsSubmitting] = useState(false);
-  
+
   // STATE FORM - menyimpan data yang user ketik di form
   const [formData, setFormData] = useState({
-    name: '',         // nama produk
-    price: '',        // harga produk
-    category: '',     // kategori produk
-    stock: '',        // jumlah stok
-    description: '',  // deskripsi produk
-    image: ''         // URL gambar produk
+    name: "", // nama produk
+    price: "", // harga produk
+    category: "", // kategori produk
+    stock: "", // jumlah stok
+    description: "", // deskripsi produk
+    image: "", // URL gambar produk
   });
 
   // Tambah isAvailable flag: kalau tidak dicentang, stok otomatis 0
@@ -30,61 +34,60 @@ export default function FormData({ onAddProduct }) {
 
     // VALIDASI FORM - pastikan semua field required sudah diisi
     if (!formData.name.trim()) {
-      alert('Nama produk harus diisi!');
+      alert("Nama produk harus diisi!");
       return;
     }
 
     if (!formData.price || Number(formData.price) <= 0) {
-      alert('Harga produk harus diisi dan lebih dari 0!');
+      alert("Harga produk harus diisi dan lebih dari 0!");
       return;
     }
 
     if (!formData.category.trim()) {
-      alert('Kategori produk harus diisi!');
+      alert("Kategori produk harus diisi!");
       return;
     }
 
     if (isAvailable && (!formData.stock || Number(formData.stock) < 0)) {
-      alert('Stok produk harus diisi dan tidak boleh negatif!');
+      alert("Stok produk harus diisi dan tidak boleh negatif!");
       return;
     }
 
     if (!formData.description.trim()) {
-      alert('Deskripsi produk harus diisi!');
+      alert("Deskripsi produk harus diisi!");
       return;
     }
 
     // Set loading state
     setIsSubmitting(true);
 
-    
     try {
       // Buat objek produk baru dari data form
       const newProduct = {
         name: formData.name,
-        price: Number(formData.price),        // Ubah string jadi number
+        price: Number(formData.price), // Ubah string jadi number
         category: formData.category,
-        stock: isAvailable ? Number(formData.stock) : 0,        // Jika tidak tersedia, stok = 0
+        stock: isAvailable ? Number(formData.stock) : 0, // Jika tidak tersedia, stok = 0
         description: formData.description,
-        image: formData.image || 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=400' // Pakai gambar default jika kosong
+        image:
+          formData.image ||
+          "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=400", // Pakai gambar default jika kosong
       };
-      
+
       // Kirim produk baru ke parent component (AdminPage)
       await onAddProduct({ ...newProduct, isAvailable });
-      console.log('Product added:', newProduct);
-      
+
       // RESET FORM - kosongkan semua input setelah submit berhasil
       setFormData({
-        name: '',
-        price: '',
-        category: '',
-        stock: '',
-        description: '',
-        image: ''
+        name: "",
+        price: "",
+        category: "",
+        stock: "",
+        description: "",
+        image: "",
       });
       setIsAvailable(true);
-    } catch (error) {
-      console.error('Error adding product:', error);
+    } catch {
       // Error handling is done in parent component
     } finally {
       setIsSubmitting(false);
@@ -94,36 +97,38 @@ export default function FormData({ onAddProduct }) {
   // FUNGSI HANDLE CHANGE - dipanggil setiap kali user mengetik di input
   const handleChange = (e) => {
     setFormData({
-      ...formData,                      // Copy data lama
-      [e.target.name]: e.target.value   // Update field yang berubah
+      ...formData, // Copy data lama
+      [e.target.name]: e.target.value, // Update field yang berubah
     });
   };
 
   return (
     // CONTAINER FORM dengan border dan shadow
     <div className="bg-gradient-to-br from-white via-blue-50/30 to-blue-100/40 rounded-3xl shadow-2xl mb-8 overflow-hidden border-2 border-white backdrop-blur-sm">
-      
       {/* HEADER FORM - background gradient biru */}
       <div className="relative bg-gradient-to-r from-blue-600 via-blue-500 to-blue-700 p-8 overflow-hidden">
         {/* Decorative elements */}
         <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full blur-3xl"></div>
         <div className="absolute bottom-0 left-0 w-48 h-48 bg-blue-400/20 rounded-full blur-2xl"></div>
-        
+
         <div className="relative flex items-center gap-4">
           {/* Icon form dengan animasi */}
           <div className="bg-white/20 backdrop-blur-md p-3 rounded-2xl shadow-lg border border-white/30">
             <PlusCircle className="w-7 h-7 text-white" />
           </div>
           <div>
-            <h2 className="text-3xl font-black text-white tracking-tight">Tambah Produk Baru</h2>
-            <p className="text-base text-blue-100 mt-1 font-medium">Lengkapi formulir untuk menambahkan produk</p>
+            <h2 className="text-3xl font-black text-white tracking-tight">
+              Tambah Produk Baru
+            </h2>
+            <p className="text-base text-blue-100 mt-1 font-medium">
+              Lengkapi formulir untuk menambahkan produk
+            </p>
           </div>
         </div>
       </div>
-      
+
       {/* ISI FORM - semua input field */}
       <div className="p-8 space-y-6">
-        
         {/* INPUT NAMA PRODUK */}
         <div className="group">
           <label className="flex items-center gap-2 text-sm font-bold text-gray-800 mb-3">
@@ -145,7 +150,6 @@ export default function FormData({ onAddProduct }) {
 
         {/* GRID 2 KOLOM - Harga & Stok bersebelahan */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          
           {/* INPUT HARGA */}
           <div className="group">
             <label className="flex items-center gap-2 text-sm font-bold text-gray-800 mb-3">
@@ -156,7 +160,9 @@ export default function FormData({ onAddProduct }) {
             </label>
             <div className="relative">
               {/* Label "Rp" di dalam input sebelah kiri */}
-              <span className="absolute left-5 top-1/2 -translate-y-1/2 text-gray-600 font-bold text-lg z-10">Rp</span>
+              <span className="absolute left-5 top-1/2 -translate-y-1/2 text-gray-600 font-bold text-lg z-10">
+                Rp
+              </span>
               <Input
                 type="number"
                 name="price"
@@ -191,7 +197,9 @@ export default function FormData({ onAddProduct }) {
                 placeholder="0"
               />
               {/* Label "unit" di dalam input sebelah kanan */}
-              <span className="absolute right-5 top-1/2 -translate-y-1/2 text-gray-600 text-base font-bold">unit</span>
+              <span className="absolute right-5 top-1/2 -translate-y-1/2 text-gray-600 text-base font-bold">
+                unit
+              </span>
             </div>
           </div>
         </div>
@@ -207,14 +215,19 @@ export default function FormData({ onAddProduct }) {
               const checked = e.target.checked;
               setIsAvailable(checked);
               if (!checked) {
-                setFormData(prev => ({ ...prev, stock: '0' }));
+                setFormData((prev) => ({ ...prev, stock: "0" }));
               } else {
-                setFormData(prev => ({ ...prev, stock: '' }));
+                setFormData((prev) => ({ ...prev, stock: "" }));
               }
             }}
             className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded"
           />
-          <label htmlFor="isAvailable" className="text-sm font-medium text-gray-800">Produk tersedia (centang untuk mengisi stok)</label>
+          <label
+            htmlFor="isAvailable"
+            className="text-sm font-medium text-gray-800"
+          >
+            Produk tersedia (centang untuk mengisi stok)
+          </label>
         </div>
 
         {/* INPUT KATEGORI - sekarang text input */}
@@ -261,7 +274,8 @@ export default function FormData({ onAddProduct }) {
             <div className="p-1.5 bg-gradient-to-br from-blue-500 to-blue-600 rounded-lg">
               <Image className="w-4 h-4 text-white" />
             </div>
-            URL Gambar <span className="text-gray-400 font-medium ml-1">(opsional)</span>
+            URL Gambar{" "}
+            <span className="text-gray-400 font-medium ml-1">(opsional)</span>
           </label>
           <Input
             type="url"
@@ -281,14 +295,16 @@ export default function FormData({ onAddProduct }) {
         >
           {/* Shine effect */}
           <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000"></div>
-          
+
           {/* Pulse background */}
           <div className="absolute inset-0 bg-white/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-          
+
           {isSubmitting ? (
             <>
               <div className="animate-spin rounded-full h-6 w-6 border-3 border-white border-t-transparent relative z-10"></div>
-              <span className="relative z-10 tracking-wide">Menambah Produk...</span>
+              <span className="relative z-10 tracking-wide">
+                Menambah Produk...
+              </span>
             </>
           ) : (
             <>

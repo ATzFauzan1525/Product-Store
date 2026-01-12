@@ -1,14 +1,19 @@
-import { ShoppingCart, Package, Tag, Eye } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
-import { useState } from 'react';
-import { Card } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
-import { reduceStockOnCheckout, generateOrderId } from '../../services/api';
-import OrderSuccessModal from '../OrderSuccessModal';
-import WhatsAppConfirmationModal from '../WhatsAppConfirmationModal';
+import { ShoppingCart, Package, Tag, Eye } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import { useState } from "react";
+import { Card } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { reduceStockOnCheckout, generateOrderId } from "../../services/api";
+import OrderSuccessModal from "../OrderSuccessModal";
+import WhatsAppConfirmationModal from "../WhatsAppConfirmationModal";
 
-export default function ProductCard({ product, onBuy, onAddToCart, viewMode = 'grid', isHighlighted = false }) {
+export default function ProductCard({
+  product,
+  onAddToCart,
+  viewMode = "grid",
+  isHighlighted = false,
+}) {
   const navigate = useNavigate();
   const [isSuccessOpen, setIsSuccessOpen] = useState(false);
   const [isWhatsAppConfirmOpen, setIsWhatsAppConfirmOpen] = useState(false);
@@ -16,24 +21,27 @@ export default function ProductCard({ product, onBuy, onAddToCart, viewMode = 'g
   const [currentOrderId, setCurrentOrderId] = useState(null);
 
   const formatPrice = (price) => {
-    return new Intl.NumberFormat('id-ID', {
-      style: 'currency',
-      currency: 'IDR',
-      minimumFractionDigits: 0
+    return new Intl.NumberFormat("id-ID", {
+      style: "currency",
+      currency: "IDR",
+      minimumFractionDigits: 0,
     }).format(price);
   };
 
   const handleCheckout = async () => {
     // Validasi stok
     if (Number(product.stock) <= 0) {
-      alert('❌ Stok sedang kosong. Mohon coba lagi nanti.');
+      alert("❌ Stok sedang kosong. Mohon coba lagi nanti.");
       return;
     }
 
     const message = `Halo, saya ingin memesan/booking ${product.name}`;
-    
+
     // Open WhatsApp
-    window.open(`https://wa.me/6287783273575?text=${encodeURIComponent(message)}`, '_blank');
+    window.open(
+      `https://wa.me/6287783273575?text=${encodeURIComponent(message)}`,
+      "_blank",
+    );
 
     // Show confirmation modal
     setIsWhatsAppConfirmOpen(true);
@@ -48,8 +56,10 @@ export default function ProductCard({ product, onBuy, onAddToCart, viewMode = 'g
       setIsWhatsAppConfirmOpen(false);
       setIsSuccessOpen(true);
     } catch (err) {
-      console.error('Error reducing stock from ProductCard', err);
-      alert('⚠️ Pesanan dikirim ke WhatsApp, tapi ada kesalahan saat mengurangi stok.\n\nError: ' + (err?.message || err));
+      alert(
+        "⚠️ Pesanan dikirim ke WhatsApp, tapi ada kesalahan saat mengurangi stok.\n\nError: " +
+          (err?.message || err),
+      );
       setIsWhatsAppConfirmOpen(false);
     } finally {
       setIsPendingConfirm(false);
@@ -57,7 +67,7 @@ export default function ProductCard({ product, onBuy, onAddToCart, viewMode = 'g
   };
 
   const handleCancelWhatsAppOrder = () => {
-    alert('❌ Order dibatalkan.');
+    alert("❌ Order dibatalkan.");
     setIsWhatsAppConfirmOpen(false);
   };
 
@@ -66,22 +76,27 @@ export default function ProductCard({ product, onBuy, onAddToCart, viewMode = 'g
   };
 
   return (
-    <Card className={`group overflow-hidden hover:shadow-2xl transition-all duration-300 p-0 ${
-      viewMode === 'list' ? 'flex' : ''
-    } ${isHighlighted ? 'ring-2 ring-blue-400 shadow-blue-200' : ''}`}>
+    <Card
+      className={`group overflow-hidden hover:shadow-2xl transition-all duration-300 p-0 ${
+        viewMode === "list" ? "flex" : ""
+      } ${isHighlighted ? "ring-2 ring-blue-400 shadow-blue-200" : ""}`}
+    >
       {/* Image Container with Overlay */}
-      <div className={`relative overflow-hidden cursor-pointer bg-white ${
-        viewMode === 'list' ? 'w-80 flex-shrink-0' : ''
-      }`} onClick={() => handleViewDetails(product)}>
-        <img 
-          src={product.image} 
+      <div
+        className={`relative overflow-hidden cursor-pointer bg-white ${
+          viewMode === "list" ? "w-80 flex-shrink-0" : ""
+        }`}
+        onClick={() => handleViewDetails(product)}
+      >
+        <img
+          src={product.image}
           alt={product.name}
           className={`object-cover object-center transition-transform duration-500 group-hover:scale-110 ${
-            viewMode === 'grid' ? 'w-full h-96' : 'w-full h-56'
+            viewMode === "grid" ? "w-full h-96" : "w-full h-56"
           }`}
         />
         <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/0 to-black/0 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-        
+
         {/* Quick View Overlay */}
         <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
           <button
@@ -95,12 +110,17 @@ export default function ProductCard({ product, onBuy, onAddToCart, viewMode = 'g
             Lihat Detail
           </button>
         </div>
-        
+
         {/* Category Badge */}
         <div className="absolute top-4 left-4">
-          <Badge variant="secondary" className="flex items-center gap-1.5 bg-white/95 backdrop-blur-sm shadow-lg">
+          <Badge
+            variant="secondary"
+            className="flex items-center gap-1.5 bg-white/95 backdrop-blur-sm shadow-lg"
+          >
             <Tag className="w-3.5 h-3.5 text-blue-600" />
-            <span className="text-xs font-semibold text-gray-700">{product.category}</span>
+            <span className="text-xs font-semibold text-gray-700">
+              {product.category}
+            </span>
           </Badge>
         </div>
 
@@ -115,25 +135,28 @@ export default function ProductCard({ product, onBuy, onAddToCart, viewMode = 'g
         )}
         {Number(product.stock) > 0 && (
           <div className="absolute top-4 right-4">
-            <Badge variant="secondary" className="flex items-center gap-1.5 bg-white/95 backdrop-blur-sm shadow-lg">
+            <Badge
+              variant="secondary"
+              className="flex items-center gap-1.5 bg-white/95 backdrop-blur-sm shadow-lg"
+            >
               <Package className="w-3.5 h-3.5 text-green-600" />
-              <span className="text-xs font-semibold text-gray-700">{product.stock}</span>
+              <span className="text-xs font-semibold text-gray-700">
+                {product.stock}
+              </span>
             </Badge>
           </div>
         )}
       </div>
 
       {/* Content */}
-      <div className={`${
-        viewMode === 'list' ? 'flex-1 p-6' : 'p-6'
-      }`}>
-        <h3 
+      <div className={`${viewMode === "list" ? "flex-1 p-6" : "p-6"}`}>
+        <h3
           className="text-xl font-bold text-gray-900 mb-3 line-clamp-2 group-hover:text-blue-600 transition-colors cursor-pointer"
           onClick={() => handleViewDetails(product)}
         >
           {product.name}
         </h3>
-        
+
         {/* Price Section */}
         <div className="mb-5">
           <div className="flex items-baseline gap-2">
@@ -155,18 +178,24 @@ export default function ProductCard({ product, onBuy, onAddToCart, viewMode = 'g
             <ShoppingCart className="w-5 h-5 transition-transform group-hover/button:scale-110" />
             <span>Tambah</span>
           </Button>
-          
+
           {/* Buy Button */}
           <Button
             onClick={handleCheckout}
             disabled={Number(product.stock) <= 0}
             className="flex-1 bg-gradient-to-r from-green-600 to-green-700 text-white py-3.5 rounded-xl hover:from-green-700 hover:to-green-800 disabled:from-gray-400 disabled:to-gray-400 disabled:cursor-not-allowed transition-all duration-300 font-semibold shadow-lg shadow-green-500/30 hover:shadow-xl hover:shadow-green-500/40 flex items-center justify-center gap-2 group/button"
-            title={Number(product.stock) <= 0 ? "Stok sedang kosong" : "Beli via WhatsApp"}
+            title={
+              Number(product.stock) <= 0
+                ? "Stok sedang kosong"
+                : "Beli via WhatsApp"
+            }
           >
             <ShoppingCart className="w-5 h-5 transition-transform group-hover/button:scale-110" />
-            <span>{Number(product.stock) <= 0 ? "Stok Kosong" : "Beli via WA"}</span>
+            <span>
+              {Number(product.stock) <= 0 ? "Stok Kosong" : "Beli via WA"}
+            </span>
           </Button>
-          
+
           {/* Detail Button */}
           <button
             onClick={() => handleViewDetails(product)}
@@ -185,10 +214,11 @@ export default function ProductCard({ product, onBuy, onAddToCart, viewMode = 'g
           setIsSuccessOpen(false);
           // Scroll ke tampilan produk
           setTimeout(() => {
-            const element = document.getElementById('products-section');
+            const element = document.getElementById("products-section");
             if (element) {
-              const top = element.getBoundingClientRect().top + window.scrollY - 100;
-              window.scrollTo({ top: top, behavior: 'smooth' });
+              const top =
+                element.getBoundingClientRect().top + window.scrollY - 100;
+              window.scrollTo({ top: top, behavior: "smooth" });
             }
           }, 150);
         }}
@@ -205,4 +235,3 @@ export default function ProductCard({ product, onBuy, onAddToCart, viewMode = 'g
     </Card>
   );
 }
-

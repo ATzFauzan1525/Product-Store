@@ -1,44 +1,44 @@
-import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { Shield, Mail, Lock, AlertCircle } from 'lucide-react';
-import { loginAdmin } from '../services/api';
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { Shield, Mail, Lock, AlertCircle } from "lucide-react";
+import { loginAdmin } from "../services/api";
 
 export default function AdminLoginPage() {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
-    email: '',
-    password: ''
+    email: "",
+    password: "",
   });
-  const [error, setError] = useState('');
+  const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
   const handleChange = (e) => {
     setFormData({
       ...formData,
-      [e.target.name]: e.target.value
+      [e.target.name]: e.target.value,
     });
     // Clear error when user starts typing
-    if (error) setError('');
+    if (error) setError("");
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsLoading(true);
-    setError('');
+    setError("");
 
     try {
       const response = await loginAdmin(formData.email, formData.password);
 
       if (response.success) {
         // Store token in sessionStorage (cleared when browser closes)
-        sessionStorage.setItem('adminToken', response.token);
-        sessionStorage.setItem('adminUser', JSON.stringify(response.user));
+        sessionStorage.setItem("adminToken", response.token);
+        sessionStorage.setItem("adminUser", JSON.stringify(response.user));
 
         // Redirect to admin page
-        navigate('/admin');
+        navigate("/admin");
       }
     } catch (err) {
-      setError(err.message || 'Terjadi kesalahan saat login');
+      setError(err.message || "Terjadi kesalahan saat login");
     } finally {
       setIsLoading(false);
     }
@@ -53,7 +53,9 @@ export default function AdminLoginPage() {
             <Shield className="w-8 h-8 text-white" />
           </div>
           <h1 className="text-3xl font-bold text-gray-900 mb-2">Admin Login</h1>
-          <p className="text-gray-600">Masuk ke panel admin untuk mengelola produk</p>
+          <p className="text-gray-600">
+            Masuk ke panel admin untuk mengelola produk
+          </p>
         </div>
 
         {/* Login Form */}

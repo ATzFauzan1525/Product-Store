@@ -1,13 +1,13 @@
-import { useState, useEffect, useCallback } from 'react';
-import { 
-  getProducts, 
-  createProduct, 
-  updateProduct, 
+import { useState, useEffect, useCallback } from "react";
+import {
+  getProducts,
+  createProduct,
+  updateProduct,
   deleteProduct,
   formatProductFromApi,
   formatProductForApi,
-  ApiError 
-} from '../services/api';
+  ApiError,
+} from "../services/api";
 
 export function useProducts() {
   const [products, setProducts] = useState([]);
@@ -23,8 +23,7 @@ export function useProducts() {
       const formattedProducts = apiProducts.map(formatProductFromApi);
       setProducts(formattedProducts);
     } catch (err) {
-      console.error('Error fetching products:', err);
-      setError(err.message || 'Failed to fetch products');
+      setError(err.message || "Failed to fetch products");
     } finally {
       setLoading(false);
     }
@@ -40,18 +39,17 @@ export function useProducts() {
     try {
       setLoading(true);
       setError(null);
-      
+
       const apiProductData = formatProductForApi(productData);
       const newProduct = await createProduct(apiProductData);
       const formattedProduct = formatProductFromApi(newProduct);
-      
+
       // Update local state immediately for better UX
-      setProducts(prev => [...prev, formattedProduct]);
-      
+      setProducts((prev) => [...prev, formattedProduct]);
+
       return formattedProduct;
     } catch (err) {
-      console.error('Error adding product:', err);
-      setError(err.message || 'Failed to add product');
+      setError(err.message || "Failed to add product");
       throw err;
     } finally {
       setLoading(false);
@@ -63,16 +61,15 @@ export function useProducts() {
     try {
       setLoading(true);
       setError(null);
-      
+
       await deleteProduct(id);
-      
+
       // Update local state immediately
-      setProducts(prev => prev.filter(p => p.id !== id));
-      
+      setProducts((prev) => prev.filter((p) => p.id !== id));
+
       return true;
     } catch (err) {
-      console.error('Error deleting product:', err);
-      setError(err.message || 'Failed to delete product');
+      setError(err.message || "Failed to delete product");
       throw err;
     } finally {
       setLoading(false);
@@ -84,20 +81,24 @@ export function useProducts() {
     try {
       setLoading(true);
       setError(null);
-      
+
       const apiProductData = formatProductForApi(updatedProductData);
-      const updatedProduct = await updateProduct(updatedProductData.id, apiProductData);
-      const formattedProduct = formatProductFromApi(updatedProduct);
-      
-      // Update local state immediately
-      setProducts(prev => 
-        prev.map(p => p.id === updatedProductData.id ? formattedProduct : p)
+      const updatedProduct = await updateProduct(
+        updatedProductData.id,
+        apiProductData,
       );
-      
+      const formattedProduct = formatProductFromApi(updatedProduct);
+
+      // Update local state immediately
+      setProducts((prev) =>
+        prev.map((p) =>
+          p.id === updatedProductData.id ? formattedProduct : p,
+        ),
+      );
+
       return formattedProduct;
     } catch (err) {
-      console.error('Error updating product:', err);
-      setError(err.message || 'Failed to update product');
+      setError(err.message || "Failed to update product");
       throw err;
     } finally {
       setLoading(false);
@@ -109,14 +110,14 @@ export function useProducts() {
     fetchProducts();
   };
 
-  return { 
-    products, 
+  return {
+    products,
     loading,
     error,
-    addProduct, 
+    addProduct,
     deleteProduct: removeProduct,
     updateProduct: editProduct,
     refreshProducts,
-    refetch: fetchProducts
+    refetch: fetchProducts,
   };
 }

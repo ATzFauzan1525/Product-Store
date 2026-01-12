@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { X, ChevronDown, ChevronUp } from 'lucide-react';
+import { useState } from "react";
+import { X, ChevronDown, ChevronUp } from "lucide-react";
 
 export default function FilterModal({
   isOpen,
@@ -7,36 +7,36 @@ export default function FilterModal({
   categories,
   selectedCategory,
   priceRange,
-  onApply
+  onApply,
 }) {
   const [localCategory, setLocalCategory] = useState(selectedCategory);
   const [localPriceRange, setLocalPriceRange] = useState(priceRange);
   const [expandedSections, setExpandedSections] = useState({
     category: true,
-    price: true
+    price: true,
   });
 
   const toggleSection = (section) => {
-    setExpandedSections(prev => ({
+    setExpandedSections((prev) => ({
       ...prev,
-      [section]: !prev[section]
+      [section]: !prev[section],
     }));
   };
 
   const handleApply = () => {
     onApply({
       category: localCategory,
-      priceRange: localPriceRange
+      priceRange: localPriceRange,
     });
     onClose();
   };
 
   const handleReset = () => {
-    setLocalCategory('all');
+    setLocalCategory("all");
     setLocalPriceRange([0, 50000000]);
     onApply({
-      category: 'all',
-      priceRange: [0, 50000000]
+      category: "all",
+      priceRange: [0, 50000000],
     });
     onClose();
   };
@@ -62,7 +62,7 @@ export default function FilterModal({
           {/* Category Filter */}
           <div>
             <button
-              onClick={() => toggleSection('category')}
+              onClick={() => toggleSection("category")}
               className="w-full flex items-center justify-between mb-4 font-semibold text-gray-900"
             >
               <span>Kategori</span>
@@ -72,11 +72,14 @@ export default function FilterModal({
                 <ChevronDown className="w-5 h-5" />
               )}
             </button>
-            
+
             {expandedSections.category && (
               <div className="space-y-3 ml-2">
-                {categories.map(category => (
-                  <label key={category} className="flex items-center gap-3 cursor-pointer group">
+                {categories.map((category) => (
+                  <label
+                    key={category}
+                    className="flex items-center gap-3 cursor-pointer group"
+                  >
                     <input
                       type="radio"
                       name="category"
@@ -86,7 +89,7 @@ export default function FilterModal({
                       className="w-4 h-4 accent-blue-600"
                     />
                     <span className="text-gray-700 group-hover:text-blue-600 transition-colors capitalize">
-                      {category === 'all' ? 'Semua Kategori' : category}
+                      {category === "all" ? "Semua Kategori" : category}
                     </span>
                   </label>
                 ))}
@@ -97,7 +100,7 @@ export default function FilterModal({
           {/* Price Range Filter */}
           <div>
             <button
-              onClick={() => toggleSection('price')}
+              onClick={() => toggleSection("price")}
               className="w-full flex items-center justify-between mb-4 font-semibold text-gray-900"
             >
               <span>Harga</span>
@@ -107,46 +110,48 @@ export default function FilterModal({
                 <ChevronDown className="w-5 h-5" />
               )}
             </button>
-            
+
             {expandedSections.price && (
               <div className="space-y-4 ml-2">
                 <div>
                   <label className="text-sm text-gray-600 mb-2 block">
-                    Harga Minimum: Rp {localPriceRange[0].toLocaleString('id-ID')}
+                    Harga Minimum (Rp)
                   </label>
                   <input
-                    type="range"
+                    type="number"
                     min="0"
                     max="50000000"
                     step="100000"
                     value={localPriceRange[0]}
                     onChange={(e) => {
-                      const newMin = parseInt(e.target.value);
+                      const newMin = parseInt(e.target.value) || 0;
                       if (newMin <= localPriceRange[1]) {
                         setLocalPriceRange([newMin, localPriceRange[1]]);
                       }
                     }}
-                    className="w-full accent-blue-600"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    placeholder="0"
                   />
                 </div>
-                
+
                 <div>
                   <label className="text-sm text-gray-600 mb-2 block">
-                    Harga Maksimum: Rp {localPriceRange[1].toLocaleString('id-ID')}
+                    Harga Maksimum (Rp)
                   </label>
                   <input
-                    type="range"
+                    type="number"
                     min="0"
                     max="50000000"
                     step="100000"
                     value={localPriceRange[1]}
                     onChange={(e) => {
-                      const newMax = parseInt(e.target.value);
+                      const newMax = parseInt(e.target.value) || 50000000;
                       if (newMax >= localPriceRange[0]) {
                         setLocalPriceRange([localPriceRange[0], newMax]);
                       }
                     }}
-                    className="w-full accent-blue-600"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    placeholder="50000000"
                   />
                 </div>
               </div>

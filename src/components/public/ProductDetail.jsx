@@ -1,19 +1,24 @@
-import { useState, useEffect } from 'react';
-import { useParams, useNavigate, Link } from 'react-router-dom';
-import { 
-  ArrowLeft, 
-  ShoppingCart, 
-  Package, 
-  Tag, 
+import { useState, useEffect } from "react";
+import { useParams, useNavigate, Link } from "react-router-dom";
+import {
+  ArrowLeft,
+  ShoppingCart,
+  Package,
+  Tag,
   Star,
   Heart,
   Share2,
   Truck,
-  Shield
-} from 'lucide-react';
-import { getProductById, formatProductFromApi, reduceStockOnCheckout, generateOrderId } from '../../services/api';
-import OrderSuccessModal from '../OrderSuccessModal';
-import WhatsAppConfirmationModal from '../WhatsAppConfirmationModal';
+  Shield,
+} from "lucide-react";
+import {
+  getProductById,
+  formatProductFromApi,
+  reduceStockOnCheckout,
+  generateOrderId,
+} from "../../services/api";
+import OrderSuccessModal from "../OrderSuccessModal";
+import WhatsAppConfirmationModal from "../WhatsAppConfirmationModal";
 
 export default function ProductDetail() {
   const { id } = useParams();
@@ -36,9 +41,8 @@ export default function ProductDetail() {
         const productData = await getProductById(id);
         const formattedProduct = formatProductFromApi(productData);
         setProduct(formattedProduct);
-      } catch (err) {
-        console.error('Error fetching product:', err);
-        setError('Produk tidak ditemukan');
+      } catch {
+        setError("Produk tidak ditemukan");
       } finally {
         setLoading(false);
       }
@@ -48,31 +52,36 @@ export default function ProductDetail() {
   }, [id]);
 
   const formatPrice = (price) => {
-    return new Intl.NumberFormat('id-ID', {
-      style: 'currency',
-      currency: 'IDR',
-      minimumFractionDigits: 0
+    return new Intl.NumberFormat("id-ID", {
+      style: "currency",
+      currency: "IDR",
+      minimumFractionDigits: 0,
     }).format(price);
   };
 
   const handleCheckout = async () => {
     // Validasi stok
     if (Number(product.stock) <= 0) {
-      alert('❌ Stok sedang kosong. Mohon coba lagi nanti.');
+      alert("❌ Stok sedang kosong. Mohon coba lagi nanti.");
       return;
     }
 
     if (Number(quantity) > Number(product.stock)) {
-      alert(`❌ Jumlah pesanan (${quantity}) melebihi stok tersedia (${product.stock}).\n\nMohon periksa kembali.`);
+      alert(
+        `❌ Jumlah pesanan (${quantity}) melebihi stok tersedia (${product.stock}).\n\nMohon periksa kembali.`,
+      );
       return;
     }
 
     const message = `Halo, saya ingin memesan/booking ${product.name}
 Jumlah: ${quantity}
 Total: ${formatPrice(product.price * quantity)}`;
-    
+
     // Open WhatsApp
-    window.open(`https://wa.me/6287783273575?text=${encodeURIComponent(message)}`, '_blank');
+    window.open(
+      `https://wa.me/6287783273575?text=${encodeURIComponent(message)}`,
+      "_blank",
+    );
 
     // Show confirmation modal
     setIsWhatsAppConfirmOpen(true);
@@ -81,14 +90,18 @@ Total: ${formatPrice(product.price * quantity)}`;
   const handleConfirmWhatsAppOrder = async () => {
     setIsPendingConfirm(true);
     try {
-      await reduceStockOnCheckout([{ id: product.id, quantity: Number(quantity) }]);
+      await reduceStockOnCheckout([
+        { id: product.id, quantity: Number(quantity) },
+      ]);
       const orderId = generateOrderId();
       setCurrentOrderId(orderId);
       setIsWhatsAppConfirmOpen(false);
       setIsSuccessOpen(true);
     } catch (err) {
-      console.error('Error reducing stock from ProductDetail:', err);
-      alert('⚠️ Pesanan dikirim ke WhatsApp, tapi ada kesalahan saat mengurangi stok.\n\nError: ' + (err?.message || err));
+      alert(
+        "⚠️ Pesanan dikirim ke WhatsApp, tapi ada kesalahan saat mengurangi stok.\n\nError: " +
+          (err?.message || err),
+      );
       setIsWhatsAppConfirmOpen(false);
     } finally {
       setIsPendingConfirm(false);
@@ -96,7 +109,7 @@ Total: ${formatPrice(product.price * quantity)}`;
   };
 
   const handleCancelWhatsAppOrder = () => {
-    alert('❌ Order dibatalkan.');
+    alert("❌ Order dibatalkan.");
     setIsWhatsAppConfirmOpen(false);
   };
 
@@ -108,12 +121,12 @@ Total: ${formatPrice(product.price * quantity)}`;
           text: `Lihat produk ${product.name} di Product Store`,
           url: window.location.href,
         });
-      } catch (err) {
-        console.log('Error sharing:', err);
+      } catch {
+        // User cancelled share
       }
     } else {
       navigator.clipboard.writeText(window.location.href);
-      alert('Link produk telah disalin!');
+      alert("Link produk telah disalin!");
     }
   };
 
@@ -135,10 +148,14 @@ Total: ${formatPrice(product.price * quantity)}`;
           <div className="w-20 h-20 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
             <Package className="w-10 h-10 text-red-600" />
           </div>
-          <h2 className="text-2xl font-bold text-gray-900 mb-2">Produk tidak ditemukan</h2>
-          <p className="text-gray-600 mb-6">{error || 'Produk yang Anda cari tidak tersedia'}</p>
+          <h2 className="text-2xl font-bold text-gray-900 mb-2">
+            Produk tidak ditemukan
+          </h2>
+          <p className="text-gray-600 mb-6">
+            {error || "Produk yang Anda cari tidak tersedia"}
+          </p>
           <button
-            onClick={() => navigate('/')}
+            onClick={() => navigate("/")}
             className="bg-blue-600 text-white px-6 py-3 rounded-xl hover:bg-blue-700 transition-colors font-semibold"
           >
             Kembali ke Katalog
@@ -154,12 +171,14 @@ Total: ${formatPrice(product.price * quantity)}`;
         <div className="container mx-auto px-4 py-4">
           <div className="flex items-center gap-4">
             <button
-              onClick={() => navigate('/')}
+              onClick={() => navigate("/")}
               className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
             >
               <ArrowLeft className="w-5 h-5" />
             </button>
-            <h1 className="text-lg font-semibold text-gray-900">Detail Produk</h1>
+            <h1 className="text-lg font-semibold text-gray-900">
+              Detail Produk
+            </h1>
           </div>
         </div>
       </div>
@@ -168,8 +187,8 @@ Total: ${formatPrice(product.price * quantity)}`;
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
           <div className="space-y-4">
             <div className="aspect-square rounded-2xl overflow-hidden bg-white shadow-lg">
-              <img 
-                src={product.image} 
+              <img
+                src={product.image}
                 alt={product.name}
                 className="w-full h-full object-cover"
               />
@@ -186,12 +205,14 @@ Total: ${formatPrice(product.price * quantity)}`;
                   <button
                     onClick={() => setIsWishlisted(!isWishlisted)}
                     className={`p-3 rounded-xl transition-colors ${
-                      isWishlisted 
-                        ? 'bg-red-100 text-red-600' 
-                        : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                      isWishlisted
+                        ? "bg-red-100 text-red-600"
+                        : "bg-gray-100 text-gray-600 hover:bg-gray-200"
                     }`}
                   >
-                    <Heart className={`w-5 h-5 ${isWishlisted ? 'fill-current' : ''}`} />
+                    <Heart
+                      className={`w-5 h-5 ${isWishlisted ? "fill-current" : ""}`}
+                    />
                   </button>
                   <button
                     onClick={handleShare}
@@ -201,7 +222,7 @@ Total: ${formatPrice(product.price * quantity)}`;
                   </button>
                 </div>
               </div>
-              
+
               <div className="flex items-center gap-2 mb-4">
                 <Tag className="w-4 h-4 text-blue-600" />
                 <span className="px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-sm font-medium">
@@ -216,19 +237,33 @@ Total: ${formatPrice(product.price * quantity)}`;
                   {formatPrice(product.price)}
                 </span>
               </div>
-              <p className="text-sm text-gray-600 mt-1">Harga terbaik untuk Anda</p>
+              <p className="text-sm text-gray-600 mt-1">
+                Harga terbaik untuk Anda
+              </p>
             </div>
 
-            <div className={`bg-white p-4 rounded-xl border-2 ${
-              Number(product.stock) <= 0 
-                ? 'border-red-200 bg-red-50' 
-                : 'border-gray-200 bg-white'
-            }`}>
+            <div
+              className={`bg-white p-4 rounded-xl border-2 ${
+                Number(product.stock) <= 0
+                  ? "border-red-200 bg-red-50"
+                  : "border-gray-200 bg-white"
+              }`}
+            >
               <div className="flex items-center gap-3">
-                <Package className={`w-5 h-5 ${Number(product.stock) <= 0 ? 'text-red-600' : 'text-green-600'}`} />
+                <Package
+                  className={`w-5 h-5 ${Number(product.stock) <= 0 ? "text-red-600" : "text-green-600"}`}
+                />
                 <div>
-                  <p className="font-semibold text-gray-900">{Number(product.stock) <= 0 ? 'Stok Kosong' : 'Stok Tersedia'}</p>
-                  <p className="text-sm text-gray-600">{Number(product.stock) <= 0 ? 'Produk ini sedang tidak tersedia' : `${product.stock} unit`}</p>
+                  <p className="font-semibold text-gray-900">
+                    {Number(product.stock) <= 0
+                      ? "Stok Kosong"
+                      : "Stok Tersedia"}
+                  </p>
+                  <p className="text-sm text-gray-600">
+                    {Number(product.stock) <= 0
+                      ? "Produk ini sedang tidak tersedia"
+                      : `${product.stock} unit`}
+                  </p>
                 </div>
               </div>
             </div>
@@ -236,14 +271,20 @@ Total: ${formatPrice(product.price * quantity)}`;
             {/* Deskripsi Produk */}
             {product.description && (
               <div className="bg-white p-6 rounded-xl border border-gray-200">
-                <h3 className="font-bold text-gray-900 mb-3 text-lg">Deskripsi Produk</h3>
-                <p className="text-gray-700 leading-relaxed">{product.description}</p>
+                <h3 className="font-bold text-gray-900 mb-3 text-lg">
+                  Deskripsi Produk
+                </h3>
+                <p className="text-gray-700 leading-relaxed">
+                  {product.description}
+                </p>
               </div>
             )}
 
             {Number(product.stock) > 0 && (
               <div className="bg-white p-4 rounded-xl border border-gray-200">
-                <label className="block font-semibold text-gray-900 mb-3">Jumlah</label>
+                <label className="block font-semibold text-gray-900 mb-3">
+                  Jumlah
+                </label>
                 <div className="flex items-center gap-4">
                   <div className="flex items-center border border-gray-300 rounded-lg">
                     <button
@@ -257,7 +298,9 @@ Total: ${formatPrice(product.price * quantity)}`;
                       {quantity}
                     </span>
                     <button
-                      onClick={() => setQuantity(Math.min(product.stock, quantity + 1))}
+                      onClick={() =>
+                        setQuantity(Math.min(product.stock, quantity + 1))
+                      }
                       className="px-4 py-2 hover:bg-gray-50 transition-colors"
                       disabled={quantity >= product.stock}
                     >
@@ -274,14 +317,21 @@ Total: ${formatPrice(product.price * quantity)}`;
             {Number(product.stock) <= 0 && (
               <div className="bg-red-50 border-2 border-red-200 p-6 rounded-xl text-center">
                 <Package className="w-10 h-10 text-red-600 mx-auto mb-3" />
-                <h3 className="text-lg font-bold text-red-700 mb-2">Produk Sedang Tidak Tersedia</h3>
-                <p className="text-red-600 text-sm">Mohon kembali lagi nanti untuk melihat ketersediaan terbaru</p>
+                <h3 className="text-lg font-bold text-red-700 mb-2">
+                  Produk Sedang Tidak Tersedia
+                </h3>
+                <p className="text-red-600 text-sm">
+                  Mohon kembali lagi nanti untuk melihat ketersediaan terbaru
+                </p>
               </div>
             )}
 
-            <div className="bg-gradient-to-r from-green-50 to-emerald-50 p-4 rounded-xl border border-green-200" style={{
-              display: Number(product.stock) > 0 ? 'block' : 'none'
-            }}>
+            <div
+              className="bg-gradient-to-r from-green-50 to-emerald-50 p-4 rounded-xl border border-green-200"
+              style={{
+                display: Number(product.stock) > 0 ? "block" : "none",
+              }}
+            >
               <div className="flex items-center justify-between">
                 <span className="font-semibold text-gray-900">Total:</span>
                 <span className="text-2xl font-bold text-green-600">
@@ -295,12 +345,18 @@ Total: ${formatPrice(product.price * quantity)}`;
                 onClick={handleCheckout}
                 disabled={Number(product.stock) <= 0}
                 className="w-full bg-gradient-to-r from-green-600 to-green-700 text-white py-4 rounded-xl hover:from-green-700 hover:to-green-800 disabled:from-gray-400 disabled:to-gray-400 disabled:cursor-not-allowed transition-all duration-300 font-bold text-lg shadow-lg shadow-green-500/30 hover:shadow-xl hover:shadow-green-500/40 flex items-center justify-center gap-3 transform hover:scale-105"
-                title={Number(product.stock) <= 0 ? "Stok sedang kosong" : "Beli via WhatsApp"}
+                title={
+                  Number(product.stock) <= 0
+                    ? "Stok sedang kosong"
+                    : "Beli via WhatsApp"
+                }
               >
                 <ShoppingCart className="w-6 h-6" />
-                {Number(product.stock) <= 0 ? 'Stok Kosong' : 'Beli via WhatsApp'}
+                {Number(product.stock) <= 0
+                  ? "Stok Kosong"
+                  : "Beli via WhatsApp"}
               </button>
-              
+
               <Link
                 to="/"
                 className="w-full bg-gray-100 text-gray-700 py-3 rounded-xl hover:bg-gray-200 transition-colors font-semibold text-center block"
@@ -315,7 +371,7 @@ Total: ${formatPrice(product.price * quantity)}`;
               onClose={() => {
                 setIsSuccessOpen(false);
                 // Navigate ke halaman utama dan scroll ke produk
-                navigate('/?scrollToProducts=true', { replace: true });
+                navigate("/?scrollToProducts=true", { replace: true });
               }}
               orderId={currentOrderId}
             />
@@ -329,19 +385,27 @@ Total: ${formatPrice(product.price * quantity)}`;
             />
 
             <div className="bg-white p-6 rounded-xl border border-gray-200">
-              <h3 className="font-bold text-gray-900 mb-4">Keunggulan Belanja</h3>
+              <h3 className="font-bold text-gray-900 mb-4">
+                Keunggulan Belanja
+              </h3>
               <div className="space-y-3">
                 <div className="flex items-center gap-3">
                   <Truck className="w-5 h-5 text-blue-600" />
-                  <span className="text-sm text-gray-700">Pengiriman cepat dan aman</span>
+                  <span className="text-sm text-gray-700">
+                    Pengiriman cepat dan aman
+                  </span>
                 </div>
                 <div className="flex items-center gap-3">
                   <Shield className="w-5 h-5 text-green-600" />
-                  <span className="text-sm text-gray-700">Garansi produk resmi</span>
+                  <span className="text-sm text-gray-700">
+                    Garansi produk resmi
+                  </span>
                 </div>
                 <div className="flex items-center gap-3">
                   <Star className="w-5 h-5 text-yellow-500" />
-                  <span className="text-sm text-gray-700">Kualitas terjamin</span>
+                  <span className="text-sm text-gray-700">
+                    Kualitas terjamin
+                  </span>
                 </div>
               </div>
             </div>
@@ -351,4 +415,3 @@ Total: ${formatPrice(product.price * quantity)}`;
     </div>
   );
 }
-

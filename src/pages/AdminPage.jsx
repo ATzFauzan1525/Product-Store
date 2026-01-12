@@ -1,31 +1,31 @@
-import { useProducts } from '../hooks/useProducts';
-import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import Navbar from '../components/public/Navbar';
-import AdminHeader from '../components/admin/AdminHeader';
-import DataTable from '../components/admin/DataTable';
+import { useProducts } from "../hooks/useProducts";
+import { useEffect, useMemo } from "react";
+import { useNavigate } from "react-router-dom";
+import Navbar from "../components/public/Navbar";
+import AdminHeader from "../components/admin/AdminHeader";
+import DataTable from "../components/admin/DataTable";
 
 export default function AdminPage() {
   const navigate = useNavigate();
-  
+
   // STATE PRODUCTS - menggunakan hook untuk mendapatkan data dari API dengan loading dan error states
-  const { products, loading, error, addProduct, deleteProduct, refreshProducts } = useProducts();
+  const { products, loading, error, deleteProduct, refreshProducts } =
+    useProducts();
 
-  // STATE untuk cache total stok dan nilai inventori (tidak berubah saat edit)
-  const [cachedTotalStock, setCachedTotalStock] = useState(0);
-  const [cachedInventoryValue, setCachedInventoryValue] = useState(0);
-
-  // Hitung cache saat products berubah
-  useEffect(() => {
+  // STATE untuk total stok dan nilai inventori (dihitung saat products berubah)
+  const { totalStock, inventoryValue } = useMemo(() => {
     if (products.length > 0) {
-      const totalStock = products.reduce((sum, p) => sum + (Number(p.stock) || 0), 0);
-      const inventoryValue = products.reduce((sum, p) => sum + ((Number(p.price) || 0) * (Number(p.stock) || 0)), 0);
-      setCachedTotalStock(totalStock);
-      setCachedInventoryValue(inventoryValue);
+      const totalStock = products.reduce(
+        (sum, p) => sum + (Number(p.stock) || 0),
+        0,
+      );
+      const inventoryValue = products.reduce(
+        (sum, p) => sum + (Number(p.price) || 0) * (Number(p.stock) || 0),
+        0,
+      );
+      return { totalStock, inventoryValue };
     } else {
-      // Reset ke 0 jika tidak ada produk
-      setCachedTotalStock(0);
-      setCachedInventoryValue(0);
+      return { totalStock: 0, inventoryValue: 0 };
     }
   }, [products]);
 
@@ -35,43 +35,27 @@ export default function AdminPage() {
       refreshProducts();
     };
 
-    window.addEventListener('focus', handleFocus);
-    return () => window.removeEventListener('focus', handleFocus);
+    window.addEventListener("focus", handleFocus);
+    return () => window.removeEventListener("focus", handleFocus);
   }, [refreshProducts]);
 
   // Logout function
   const handleLogout = () => {
-    sessionStorage.removeItem('adminToken');
-    sessionStorage.removeItem('adminUser');
-    navigate('/admin/login');
-  };
-
-  // FUNGSI TAMBAH PRODUK via API
-  // Dipanggil dari halaman tambah produk saat user submit form
-  const handleAddProduct = async (newProduct) => {
-    try {
-      console.log('Menambah produk baru:', newProduct);
-      await addProduct(newProduct);
-      refreshProducts(); // Refresh data setelah tambah produk
-      alert('Produk berhasil ditambahkan!');
-    } catch (err) {
-      console.error('Error adding product:', err);
-      alert(`Gagal menambahkan produk: ${err.message}`);
-    }
+    sessionStorage.removeItem("adminToken");
+    sessionStorage.removeItem("adminUser");
+    navigate("/admin/login");
   };
 
   // FUNGSI HAPUS PRODUK via API
   // Dipanggil dari DataTable saat user klik tombol Hapus
   const handleDelete = async (id) => {
     try {
-      if (window.confirm('Apakah Anda yakin ingin menghapus produk ini?')) {
-        console.log('Menghapus produk dengan ID:', id);
+      if (window.confirm("Apakah Anda yakin ingin menghapus produk ini?")) {
         await deleteProduct(id);
         refreshProducts(); // Refresh data setelah hapus produk
-        alert('Produk berhasil dihapus!');
+        alert("Produk berhasil dihapus!");
       }
     } catch (err) {
-      console.error('Error deleting product:', err);
       alert(`Gagal menghapus produk: ${err.message}`);
     }
   };
@@ -84,7 +68,7 @@ export default function AdminPage() {
         <div className="container mx-auto px-4 py-8 flex items-center justify-center">
           <div className="text-center">
             <div className="animate-spin rounded-full h-16 w-16 border-4 border-blue-600 border-t-transparent mx-auto mb-4"></div>
-            <p className="text-gray-600 font-medium">Memuat data produk...</p>
+            <p className="text-gray-600 font-medium">Loading...</p>
           </div>
         </div>
       </div>
@@ -98,7 +82,9 @@ export default function AdminPage() {
         <Navbar />
         <div className="container mx-auto px-4 py-8">
           <div className="bg-red-50 border border-red-200 rounded-lg p-6 mb-6">
-            <h3 className="text-red-800 font-semibold mb-2">Terjadi Kesalahan</h3>
+            <h3 className="text-red-800 font-semibold mb-2">
+              Terjadi Kesalahan
+            </h3>
             <p className="text-red-600 mb-4">{error}</p>
             <button
               onClick={refreshProducts}
@@ -115,18 +101,16 @@ export default function AdminPage() {
   return (
     // CONTAINER HALAMAN dengan background abu-abu
     <div className="min-h-screen bg-gray-100">
-      
       {/* NAVBAR - menu navigasi di atas */}
       <Navbar />
-      
+
       {/* KONTEN UTAMA dengan padding dan max width */}
       <div className="container mx-auto px-4 py-8">
-        
         {/* HEADER - banner besar dengan judul dashboard */}
-        <AdminHeader 
+        <AdminHeader
           totalProducts={products.length}
-          totalStock={cachedTotalStock}
-          inventoryValue={cachedInventoryValue}
+          totalStock={totalStock}
+          inventoryValue={inventoryValue}
           onLogout={handleLogout}
         />
 
@@ -136,7 +120,7 @@ export default function AdminPage() {
         <DataTable
           products={products}
           onDelete={handleDelete}
-          onAddProduct={() => navigate('/admin/add')}
+          onAddProduct={() => navigate("/admin/add")}
         />
       </div>
     </div>

@@ -1,6 +1,12 @@
-import { CheckCircle, X } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogClose } from '@/components/ui/dialog';
+import { CheckCircle, X } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogClose,
+} from "@/components/ui/dialog";
 
 export default function OrderConfirmationModal({ isOpen, onClose, orderId }) {
   if (!isOpen) return null;
@@ -17,8 +23,12 @@ export default function OrderConfirmationModal({ isOpen, onClose, orderId }) {
               </div>
             </div>
             <div>
-              <h2 className="text-2xl font-bold text-gray-900">Konfirmasi Pesanan</h2>
-              <p className="text-sm text-gray-600 mt-2">Apakah Anda ingin melanjutkan ke WhatsApp?</p>
+              <h2 className="text-2xl font-bold text-gray-900">
+                Konfirmasi Pesanan
+              </h2>
+              <p className="text-sm text-gray-600 mt-2">
+                Apakah Anda ingin melanjutkan ke WhatsApp?
+              </p>
             </div>
           </div>
         </DialogHeader>
@@ -27,7 +37,9 @@ export default function OrderConfirmationModal({ isOpen, onClose, orderId }) {
           {orderId && (
             <div className="bg-gray-100 p-3 rounded-lg text-center">
               <p className="text-sm text-gray-600">Order ID</p>
-              <p className="font-mono text-lg font-bold text-gray-900">#{orderId}</p>
+              <p className="font-mono text-lg font-bold text-gray-900">
+                #{orderId}
+              </p>
             </div>
           )}
 
@@ -47,7 +59,7 @@ export default function OrderConfirmationModal({ isOpen, onClose, orderId }) {
             <Button
               onClick={() => {
                 onClose();
-                // This will be handled by parent component
+                
               }}
               className="flex-1 bg-green-600 hover:bg-green-700"
             >

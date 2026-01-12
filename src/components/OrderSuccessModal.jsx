@@ -1,15 +1,21 @@
-import { CheckCircle, Copy } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Dialog, DialogContent, DialogHeader } from '@/components/ui/dialog';
+import { CheckCircle, Copy } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Dialog, DialogContent, DialogHeader } from "@/components/ui/dialog";
 
-export default function OrderSuccessModal({ isOpen, onClose, orderId }) {
+export default function OrderSuccessModal({ isOpen, orderId }) {
   const handleCopyOrderId = () => {
     navigator.clipboard.writeText(orderId);
-    alert('Order ID disalin ke clipboard!');
+    alert("Order ID disalin ke clipboard!");
   };
 
   return (
-    <Dialog open={isOpen} onOpenChange={onClose}>
+    <Dialog
+      open={isOpen}
+      onOpenChange={() => {
+        sessionStorage.setItem("scrollAfterReload", "true");
+        window.location.reload();
+      }}
+    >
       <DialogContent className="max-w-md">
         <DialogHeader>
           <div className="text-center space-y-4">
@@ -23,8 +29,12 @@ export default function OrderSuccessModal({ isOpen, onClose, orderId }) {
 
             {/* Title */}
             <div>
-              <h2 className="text-2xl font-bold text-gray-900">Pesanan Berhasil! 🎉</h2>
-              <p className="text-sm text-gray-600 mt-2">Terima kasih telah berbelanja di Product Store</p>
+              <h2 className="text-2xl font-bold text-gray-900">
+                Pesanan Berhasil! 🎉
+              </h2>
+              <p className="text-sm text-gray-600 mt-2">
+                Terima kasih telah berbelanja di Product Store
+              </p>
             </div>
           </div>
         </DialogHeader>
@@ -37,7 +47,8 @@ export default function OrderSuccessModal({ isOpen, onClose, orderId }) {
               Halo! Terima kasih telah berbelanja di Product Store 😊
             </p>
             <p className="text-sm text-gray-600">
-              Pesanan sedang kami proses. Kami akan menghubungi Anda jika pesanan sudah dikirim.
+              Pesanan sedang kami proses. Kami akan menghubungi Anda jika
+              pesanan sudah dikirim.
             </p>
           </div>
 
@@ -45,7 +56,9 @@ export default function OrderSuccessModal({ isOpen, onClose, orderId }) {
           <div className="space-y-2">
             <p className="text-sm font-semibold text-gray-700">Order ID</p>
             <div className="flex items-center gap-2 bg-gray-100 p-3 rounded-lg border border-gray-300">
-              <span className="flex-1 font-mono text-lg font-bold text-gray-900">#{orderId}</span>
+              <span className="flex-1 font-mono text-lg font-bold text-gray-900">
+                #{orderId}
+              </span>
               <button
                 onClick={handleCopyOrderId}
                 className="p-2 hover:bg-gray-200 rounded-lg transition-colors"
@@ -58,7 +71,9 @@ export default function OrderSuccessModal({ isOpen, onClose, orderId }) {
 
           {/* Info Box */}
           <div className="bg-blue-50 border border-blue-200 p-3 rounded-lg space-y-2">
-            <p className="text-xs font-semibold text-blue-700">📝 Catatan Penting</p>
+            <p className="text-xs font-semibold text-blue-700">
+              📝 Catatan Penting
+            </p>
             <ul className="text-xs text-blue-600 space-y-1">
               <li>✓ Pesan Anda sudah diterima</li>
               <li>✓ Kami akan mengirim notifikasi pembaruan</li>
@@ -70,7 +85,10 @@ export default function OrderSuccessModal({ isOpen, onClose, orderId }) {
         {/* Action Button */}
         <div className="flex gap-3">
           <Button
-            onClick={onClose}
+            onClick={() => {
+              sessionStorage.setItem("scrollAfterReload", "true");
+              window.location.reload();
+            }}
             className="flex-1 bg-green-600 hover:bg-green-700 text-white"
           >
             Kembali ke Katalog
@@ -79,9 +97,7 @@ export default function OrderSuccessModal({ isOpen, onClose, orderId }) {
 
         {/* Footer Message */}
         <div className="text-center pt-4 border-t border-gray-200">
-          <p className="text-xs text-gray-500">
-            Terima kasih 🙏
-          </p>
+          <p className="text-xs text-gray-500">Terima kasih 🙏</p>
         </div>
       </DialogContent>
     </Dialog>

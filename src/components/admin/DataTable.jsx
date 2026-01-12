@@ -1,5 +1,5 @@
-import { Trash2, Package, Edit } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { Trash2, Package, Edit } from "lucide-react";
+import { Link } from "react-router-dom";
 import {
   Table,
   TableBody,
@@ -21,11 +21,10 @@ import {
 import { Button } from "../ui/button";
 
 export default function DataTable({ products = [], onDelete, onAddProduct }) {
-
   const formatPrice = (price = 0) => {
-    return new Intl.NumberFormat('id-ID', {
-      style: 'currency',
-      currency: 'IDR',
+    return new Intl.NumberFormat("id-ID", {
+      style: "currency",
+      currency: "IDR",
       minimumFractionDigits: 0,
     }).format(price);
   };
@@ -149,9 +148,7 @@ export default function DataTable({ products = [], onDelete, onAddProduct }) {
       </div>
 
       {products.length === 0 && (
-        <div className="text-center py-10 text-gray-500">
-          Belum ada produk
-        </div>
+        <div className="text-center py-10 text-gray-500">Data Kosong</div>
       )}
     </div>
   );

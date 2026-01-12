@@ -1,17 +1,25 @@
-import { X, CheckCircle, AlertCircle } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { X, CheckCircle, AlertCircle } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 
-export default function WhatsAppConfirmationModal({ 
-  isOpen, 
-  onConfirm, 
+export default function WhatsAppConfirmationModal({
+  isOpen,
+  onConfirm,
   onCancel,
-  isProcessing = false
+  isProcessing = false,
 }) {
   return (
-    <Dialog open={isOpen} onOpenChange={(open) => {
-      if (!open && !isProcessing) onCancel();
-    }}>
+    <Dialog
+      open={isOpen}
+      onOpenChange={(open) => {
+        if (!open && !isProcessing) onCancel();
+      }}
+    >
       <DialogContent className="max-w-md">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2 text-lg font-bold">
@@ -24,10 +32,11 @@ export default function WhatsAppConfirmationModal({
           <p className="text-sm text-gray-700">
             Apakah Anda sudah mengirim pesan ke WhatsApp?
           </p>
-          
+
           <div className="bg-blue-50 border border-blue-200 p-3 rounded-lg">
             <p className="text-xs text-blue-700">
-              💡 Klik "Ya, Pesanan Berhasil" jika pesan sudah dikirim ke nomor kami.
+              💡 Klik "Ya, Pesanan Berhasil" jika pesan sudah dikirim ke nomor
+              kami.
             </p>
           </div>
 

@@ -1,24 +1,36 @@
-import { useState, useEffect, useCallback, useRef } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
-import { ArrowLeft, Save, Package, DollarSign, Box, Tag, Image, Sparkles } from 'lucide-react';
-import Navbar from '../components/public/Navbar';
-import { getProductById, formatProductFromApi, updateProduct } from '../services/api';
+import { useState, useEffect, useCallback } from "react";
+import { useParams, useNavigate } from "react-router-dom";
+import {
+  ArrowLeft,
+  Save,
+  Package,
+  DollarSign,
+  Box,
+  Tag,
+  Image,
+  Sparkles,
+} from "lucide-react";
+import Navbar from "../components/public/Navbar";
+import {
+  getProductById,
+  formatProductFromApi,
+  updateProduct,
+} from "../services/api";
 
 export default function EditProductPage() {
   const { id } = useParams();
   const navigate = useNavigate();
 
-  const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [formData, setFormData] = useState({
-    name: '',
-    price: '',
-    category: '',
-    stock: '',
-    image: '',
-    description: '',
-    isAvailable: true
+    name: "",
+    price: "",
+    category: "",
+    stock: "",
+    image: "",
+    description: "",
+    isAvailable: true,
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -29,21 +41,19 @@ export default function EditProductPage() {
         setError(null);
         const productData = await getProductById(id);
         const formattedProduct = formatProductFromApi(productData);
-        setProduct(formattedProduct);
+
         const newFormData = {
           name: formattedProduct.name,
           price: String(formattedProduct.price),
           category: formattedProduct.category,
           stock: String(formattedProduct.stock),
           image: formattedProduct.image,
-          description: formattedProduct.description || '',
-          isAvailable: formattedProduct.isAvailable
+          description: formattedProduct.description || "",
+          isAvailable: formattedProduct.isAvailable,
         };
-        console.log('Setting formData from API:', newFormData);
         setFormData(newFormData);
-      } catch (err) {
-        console.error('Error fetching product:', err);
-        setError('Produk tidak ditemukan');
+      } catch {
+        setError("Produk tidak ditemukan");
       } finally {
         setLoading(false);
       }
@@ -52,44 +62,30 @@ export default function EditProductPage() {
     fetchProduct();
   }, [id]);
 
-  // Remove debug useEffect that might cause issues
-  // useEffect(() => {
-  //   console.log('formData changed:', formData);
-  // }, [formData]);
-
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsSubmitting(true);
 
     try {
-      console.log('=== EDIT PRODUCT SUBMIT DEBUG ===');
-      console.log('Original product stock:', product.stock, typeof product.stock);
-      console.log('Form data stock:', formData.stock, typeof formData.stock);
-      console.log('Form data isAvailable:', formData.isAvailable);
-
       const stockValue = Number(formData.stock);
-      
+
       const updatedProduct = {
         name: formData.name,
         price: Number(formData.price),
         category: formData.category,
         stock: stockValue,
-        image: formData.image || 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=400',
+        image:
+          formData.image ||
+          "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=400",
         description: formData.description,
-        isAvailable: formData.isAvailable
+        isAvailable: formData.isAvailable,
       };
 
-      console.log('Final updatedProduct stock:', updatedProduct.stock, typeof updatedProduct.stock);
-      console.log('Final updatedProduct isAvailable:', updatedProduct.isAvailable);
-      console.log('Data yang akan dikirim:', updatedProduct);
+      await updateProduct(id, updatedProduct);
 
-      const response = await updateProduct(id, updatedProduct);
-      console.log('Response dari API:', response);
-
-      alert('Produk berhasil diupdate!');
-      navigate('/admin');
+      alert("Produk berhasil diupdate!");
+      navigate("/admin");
     } catch (err) {
-      console.error('Error updating product:', err);
       alert(`Gagal mengupdate produk: ${err.message}`);
     } finally {
       setIsSubmitting(false);
@@ -98,30 +94,27 @@ export default function EditProductPage() {
 
   const handleChange = useCallback((e) => {
     const { name, value, type, checked } = e.target;
-    console.log('handleChange called:', name, value, type, checked);
-    
+
     let processedValue = value;
-    
-    if (type === 'checkbox') {
+
+    if (type === "checkbox") {
       processedValue = checked;
-    } else if (name === 'stock' || name === 'price') {
+    } else if (name === "stock" || name === "price") {
       // Ensure it's a valid number string
-      processedValue = value.replace(/[^0-9]/g, '');
-      console.log('Processed number value:', processedValue);
+      processedValue = value.replace(/[^0-9]/g, "");
     }
-    
-    setFormData(prevFormData => {
+
+    setFormData((prevFormData) => {
       const newFormData = {
         ...prevFormData,
-        [name]: processedValue
+        [name]: processedValue,
       };
-      
+
       // Special logic for stock: auto-update isAvailable
-      if (name === 'stock') {
+      if (name === "stock") {
         newFormData.isAvailable = Number(processedValue) > 0;
       }
-      
-      console.log('Setting new formData:', newFormData);
+
       return newFormData;
     });
   }, []);
@@ -138,7 +131,9 @@ export default function EditProductPage() {
                 <div className="w-20 h-20 border-4 border-blue-200 border-t-blue-600 rounded-full animate-spin"></div>
               </div>
             </div>
-            <h3 className="text-xl font-bold text-gray-800 mb-2">Memuat Data Produk</h3>
+            <h3 className="text-xl font-bold text-gray-800 mb-2">
+              Memuat Data Produk
+            </h3>
             <p className="text-gray-500">Mohon tunggu sebentar...</p>
           </div>
         </div>
@@ -155,15 +150,27 @@ export default function EditProductPage() {
             <div className="bg-white rounded-3xl p-8 shadow-2xl border border-red-100">
               <div className="flex items-start gap-5">
                 <div className="flex-shrink-0 w-14 h-14 bg-gradient-to-br from-red-400 to-red-600 rounded-2xl flex items-center justify-center shadow-lg">
-                  <svg className="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  <svg
+                    className="w-7 h-7 text-white"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                    />
                   </svg>
                 </div>
                 <div className="flex-1">
-                  <h3 className="text-2xl font-bold text-gray-900 mb-2">Oops! Terjadi Kesalahan</h3>
+                  <h3 className="text-2xl font-bold text-gray-900 mb-2">
+                    Oops! Terjadi Kesalahan
+                  </h3>
                   <p className="text-gray-600 mb-6 leading-relaxed">{error}</p>
                   <button
-                    onClick={() => navigate('/admin')}
+                    onClick={() => navigate("/admin")}
                     className="bg-gradient-to-r from-blue-600 to-blue-700 text-white px-8 py-3 rounded-xl font-semibold hover:shadow-xl transform hover:scale-105 transition-all"
                   >
                     Kembali ke Dashboard
@@ -185,7 +192,7 @@ export default function EditProductPage() {
         {/* Header Section */}
         <div className="mb-10">
           <button
-            onClick={() => navigate('/admin')}
+            onClick={() => navigate("/admin")}
             className="group flex items-center gap-2 text-blue-600 hover:text-blue-700 font-semibold mb-8 transition-all"
           >
             <div className="w-8 h-8 rounded-lg bg-blue-100 flex items-center justify-center group-hover:bg-blue-200 transition-colors">
@@ -193,7 +200,7 @@ export default function EditProductPage() {
             </div>
             <span>Kembali ke Dashboard</span>
           </button>
-          
+
           <div className="relative overflow-hidden bg-gradient-to-r from-blue-600 via-blue-700 to-indigo-700 rounded-3xl p-10 shadow-2xl">
             <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full -mr-32 -mt-32"></div>
             <div className="absolute bottom-0 left-0 w-48 h-48 bg-white/10 rounded-full -ml-24 -mb-24"></div>
@@ -203,10 +210,14 @@ export default function EditProductPage() {
               </div>
               <div>
                 <div className="flex items-center gap-3 mb-2">
-                  <h1 className="text-4xl font-black text-white">Edit Produk</h1>
+                  <h1 className="text-4xl font-black text-white">
+                    Edit Produk
+                  </h1>
                   <Sparkles className="w-6 h-6 text-yellow-300" />
                 </div>
-                <p className="text-blue-100 text-lg font-medium">Perbarui informasi produk • ID: {id}</p>
+                <p className="text-blue-100 text-lg font-medium">
+                  Perbarui informasi produk • ID: {id}
+                </p>
               </div>
             </div>
           </div>
@@ -216,7 +227,6 @@ export default function EditProductPage() {
         <div className="bg-white rounded-3xl shadow-2xl border border-gray-100 overflow-hidden">
           <form onSubmit={handleSubmit} className="p-10">
             <div className="space-y-8">
-              
               {/* ID Produk */}
               <div className="group">
                 <label className="flex items-center gap-2 text-sm font-bold text-gray-700 mb-3">
@@ -266,7 +276,9 @@ export default function EditProductPage() {
                   </label>
                   <div className="relative">
                     <DollarSign className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-green-500" />
-                    <span className="absolute left-11 top-1/2 -translate-y-1/2 text-gray-600 font-bold">Rp</span>
+                    <span className="absolute left-11 top-1/2 -translate-y-1/2 text-gray-600 font-bold">
+                      Rp
+                    </span>
                     <input
                       type="number"
                       name="price"
@@ -347,7 +359,9 @@ export default function EditProductPage() {
                   <span className="w-2 h-2 bg-emerald-500 rounded-full"></span>
                   Status Ketersediaan
                 </label>
-                <div className={`relative overflow-hidden rounded-2xl border-2 transition-all ${formData.isAvailable ? 'border-emerald-200 bg-gradient-to-br from-emerald-50 to-green-50' : 'border-gray-200 bg-gray-50'}`}>
+                <div
+                  className={`relative overflow-hidden rounded-2xl border-2 transition-all ${formData.isAvailable ? "border-emerald-200 bg-gradient-to-br from-emerald-50 to-green-50" : "border-gray-200 bg-gray-50"}`}
+                >
                   <label className="flex items-start gap-4 p-6 cursor-pointer">
                     <div className="relative flex items-center">
                       <input
@@ -360,7 +374,9 @@ export default function EditProductPage() {
                     </div>
                     <div className="flex-1">
                       <div className="flex items-center gap-2 mb-2">
-                        <span className="text-gray-900 font-bold text-lg">Produk Tersedia</span>
+                        <span className="text-gray-900 font-bold text-lg">
+                          Produk Tersedia
+                        </span>
                         {formData.isAvailable && (
                           <span className="px-3 py-1 bg-emerald-500 text-white text-xs font-bold rounded-full">
                             AKTIF
@@ -368,9 +384,9 @@ export default function EditProductPage() {
                         )}
                       </div>
                       <p className="text-gray-600 leading-relaxed">
-                        {formData.isAvailable 
-                          ? '✓ Produk akan ditampilkan di katalog dan dapat dibeli oleh pelanggan' 
-                          : '✗ Produk tidak akan ditampilkan dan stok otomatis menjadi 0'}
+                        {formData.isAvailable
+                          ? "✓ Produk akan ditampilkan di katalog dan dapat dibeli oleh pelanggan"
+                          : "✗ Produk tidak akan ditampilkan dan stok otomatis menjadi 0"}
                       </p>
                     </div>
                   </label>
@@ -394,7 +410,9 @@ export default function EditProductPage() {
                     placeholder="https://example.com/gambar-produk.jpg"
                   />
                 </div>
-                <p className="text-xs text-gray-500 mt-2 ml-1">Masukkan URL gambar produk dari internet</p>
+                <p className="text-xs text-gray-500 mt-2 ml-1">
+                  Masukkan URL gambar produk dari internet
+                </p>
               </div>
 
               {/* Preview Gambar */}
@@ -412,14 +430,14 @@ export default function EditProductPage() {
                         alt="Preview"
                         className="w-40 h-40 object-cover rounded-xl"
                         onError={(e) => {
-                          e.target.src = 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=400';
+                          e.target.src =
+                            "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=400";
                         }}
                       />
                     </div>
                   </div>
                 </div>
               )}
-
             </div>
 
             {/* Action Buttons */}
@@ -443,7 +461,7 @@ export default function EditProductPage() {
               </button>
               <button
                 type="button"
-                onClick={() => navigate('/admin')}
+                onClick={() => navigate("/admin")}
                 className="flex-1 bg-white text-gray-700 py-4 rounded-xl font-bold text-lg hover:bg-gray-100 transition-all border-2 border-gray-200 shadow-sm hover:shadow-lg transform hover:scale-105"
               >
                 Batal
