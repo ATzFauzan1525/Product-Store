@@ -104,7 +104,7 @@ export default function FormData({ onAddProduct }) {
 
   return (
     // CONTAINER FORM dengan border dan shadow
-    <div className="bg-gradient-to-br from-white via-blue-50/30 to-blue-100/40 rounded-3xl shadow-2xl mb-8 overflow-hidden border-2 border-white backdrop-blur-sm">
+    <div className="bg-gradient-to-br from-white via-blue-50/30 to-blue-100/40 dark:bg-gradient-to-br dark:from-gray-800 dark:via-gray-700 dark:to-gray-900 rounded-3xl shadow-2xl mb-8 overflow-hidden border-2 border-white dark:border-gray-700 backdrop-blur-sm">
       {/* HEADER FORM - background gradient biru */}
       <div className="relative bg-gradient-to-r from-blue-600 via-blue-500 to-blue-700 p-8 overflow-hidden">
         {/* Decorative elements */}
@@ -131,7 +131,7 @@ export default function FormData({ onAddProduct }) {
       <div className="p-8 space-y-6">
         {/* INPUT NAMA PRODUK */}
         <div className="group">
-          <label className="flex items-center gap-2 text-sm font-bold text-gray-800 mb-3">
+          <label className="flex items-center gap-2 text-sm font-bold text-gray-800 dark:text-gray-200 mb-3">
             <div className="p-1.5 bg-gradient-to-br from-blue-500 to-blue-600 rounded-lg">
               <Package className="w-4 h-4 text-white" />
             </div>
@@ -144,7 +144,7 @@ export default function FormData({ onAddProduct }) {
             onChange={handleChange}
             required
             placeholder="Masukkan nama produk"
-            className="h-14 px-5 text-base font-medium border-2 border-gray-200 rounded-2xl focus:ring-4 focus:ring-blue-500/20 focus:border-blue-500 transition-all duration-300 hover:border-gray-300 hover:shadow-lg bg-white"
+            className="h-14 px-5 text-base font-medium border-2 border-gray-200 rounded-2xl focus:ring-4 focus:ring-blue-500/20 focus:border-blue-500 transition-all duration-300 hover:border-gray-300 hover:shadow-lg bg-white dark:bg-gray-700 dark:text-gray-100 dark:border-gray-600 dark:focus:ring-blue-900"
           />
         </div>
 
@@ -152,7 +152,7 @@ export default function FormData({ onAddProduct }) {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {/* INPUT HARGA */}
           <div className="group">
-            <label className="flex items-center gap-2 text-sm font-bold text-gray-800 mb-3">
+            <label className="flex items-center gap-2 text-sm font-bold text-gray-800 dark:text-gray-200 mb-3">
               <div className="p-1.5 bg-gradient-to-br from-blue-500 to-blue-600 rounded-lg">
                 <DollarSign className="w-4 h-4 text-white" />
               </div>
@@ -160,7 +160,7 @@ export default function FormData({ onAddProduct }) {
             </label>
             <div className="relative">
               {/* Label "Rp" di dalam input sebelah kiri */}
-              <span className="absolute left-5 top-1/2 -translate-y-1/2 text-gray-600 font-bold text-lg z-10">
+              <span className="absolute left-5 top-1/2 -translate-y-1/2 text-gray-600 dark:text-gray-400 font-bold text-lg z-10">
                 Rp
               </span>
               <Input
@@ -170,7 +170,7 @@ export default function FormData({ onAddProduct }) {
                 onChange={handleChange}
                 required
                 min="0"
-                className="h-14 pl-16 pr-5 text-base font-semibold border-2 border-gray-200 rounded-2xl focus:ring-4 focus:ring-blue-500/20 focus:border-blue-500 transition-all duration-300 hover:border-gray-300 hover:shadow-lg bg-white"
+                className="h-14 pl-16 pr-5 text-base font-semibold border-2 border-gray-200 dark:border-gray-600 rounded-2xl focus:ring-4 focus:ring-blue-500/20 dark:focus:ring-blue-900 focus:border-blue-500 transition-all duration-300 hover:border-gray-300 dark:hover:border-gray-500 hover:shadow-lg bg-white dark:bg-gray-700 dark:text-gray-100"
                 placeholder="0"
               />
             </div>
@@ -178,7 +178,7 @@ export default function FormData({ onAddProduct }) {
 
           {/* INPUT STOK */}
           <div className="group">
-            <label className="flex items-center gap-2 text-sm font-bold text-gray-800 mb-3">
+            <label className="flex items-center gap-2 text-sm font-bold text-gray-800 dark:text-gray-200 mb-3">
               <div className="p-1.5 bg-gradient-to-br from-blue-500 to-blue-600 rounded-lg">
                 <Box className="w-4 h-4 text-white" />
               </div>
@@ -193,11 +193,11 @@ export default function FormData({ onAddProduct }) {
                 required={isAvailable}
                 min="0"
                 disabled={!isAvailable}
-                className="h-14 px-5 pr-20 text-base font-semibold border-2 border-gray-200 rounded-2xl focus:ring-4 focus:ring-blue-500/20 focus:border-blue-500 transition-all duration-300 hover:border-gray-300 hover:shadow-lg bg-white"
+                className="h-14 px-5 pr-20 text-base font-semibold border-2 border-gray-200 dark:border-gray-600 rounded-2xl focus:ring-4 focus:ring-blue-500/20 dark:focus:ring-blue-900 focus:border-blue-500 transition-all duration-300 hover:border-gray-300 dark:hover:border-gray-500 hover:shadow-lg bg-white dark:bg-gray-700 dark:text-gray-100"
                 placeholder="0"
               />
               {/* Label "unit" di dalam input sebelah kanan */}
-              <span className="absolute right-5 top-1/2 -translate-y-1/2 text-gray-600 text-base font-bold">
+              <span className="absolute right-5 top-1/2 -translate-y-1/2 text-gray-600 dark:text-gray-400 text-base font-bold">
                 unit
               </span>
             </div>
@@ -224,7 +224,7 @@ export default function FormData({ onAddProduct }) {
           />
           <label
             htmlFor="isAvailable"
-            className="text-sm font-medium text-gray-800"
+            className="text-sm font-medium text-gray-800 dark:text-gray-200"
           >
             Produk tersedia (centang untuk mengisi stok)
           </label>
@@ -232,7 +232,7 @@ export default function FormData({ onAddProduct }) {
 
         {/* INPUT KATEGORI - sekarang text input */}
         <div className="group">
-          <label className="flex items-center gap-2 text-sm font-bold text-gray-800 mb-3">
+          <label className="flex items-center gap-2 text-sm font-bold text-gray-800 dark:text-gray-200 mb-3">
             <div className="p-1.5 bg-gradient-to-br from-blue-500 to-blue-600 rounded-lg">
               <Tag className="w-4 h-4 text-white" />
             </div>
@@ -245,13 +245,13 @@ export default function FormData({ onAddProduct }) {
             onChange={handleChange}
             required
             placeholder="Contoh: Electronics, Audio, Wearables"
-            className="h-14 px-5 text-base font-medium border-2 border-gray-200 rounded-2xl focus:ring-4 focus:ring-blue-500/20 focus:border-blue-500 transition-all duration-300 hover:border-gray-300 hover:shadow-lg bg-white"
+            className="h-14 px-5 text-base font-medium border-2 border-gray-200 dark:border-gray-600 rounded-2xl focus:ring-4 focus:ring-blue-500/20 dark:focus:ring-blue-900 focus:border-blue-500 transition-all duration-300 hover:border-gray-300 dark:hover:border-gray-500 hover:shadow-lg bg-white dark:bg-gray-700 dark:text-gray-100"
           />
         </div>
 
         {/* INPUT DESKRIPSI - textarea */}
         <div className="group">
-          <label className="flex items-center gap-2 text-sm font-bold text-gray-800 mb-3">
+          <label className="flex items-center gap-2 text-sm font-bold text-gray-800 dark:text-gray-200 mb-3">
             <div className="p-1.5 bg-gradient-to-br from-blue-500 to-blue-600 rounded-lg">
               <FileText className="w-4 h-4 text-white" />
             </div>
@@ -264,18 +264,18 @@ export default function FormData({ onAddProduct }) {
             required
             rows="4"
             placeholder="Jelaskan detail produk, fitur, dan spesifikasinya..."
-            className="w-full px-5 py-4 text-base font-medium border-2 border-gray-200 rounded-2xl focus:ring-4 focus:ring-blue-500/20 focus:border-blue-500 transition-all duration-300 hover:border-gray-300 hover:shadow-lg bg-white resize-none"
+            className="w-full px-5 py-4 text-base font-medium border-2 border-gray-200 dark:border-gray-600 rounded-2xl focus:ring-4 focus:ring-blue-500/20 dark:focus:ring-blue-900 focus:border-blue-500 transition-all duration-300 hover:border-gray-300 dark:hover:border-gray-500 hover:shadow-lg bg-white dark:bg-gray-700 dark:text-gray-100 resize-none"
           />
         </div>
 
         {/* INPUT URL GAMBAR - opsional */}
         <div className="group">
-          <label className="flex items-center gap-2 text-sm font-bold text-gray-800 mb-3">
+          <label className="flex items-center gap-2 text-sm font-bold text-gray-800 dark:text-gray-200 mb-3">
             <div className="p-1.5 bg-gradient-to-br from-blue-500 to-blue-600 rounded-lg">
               <Image className="w-4 h-4 text-white" />
             </div>
             URL Gambar{" "}
-            <span className="text-gray-400 font-medium ml-1">(opsional)</span>
+            <span className="text-gray-400 dark:text-gray-500 font-medium ml-1">(opsional)</span>
           </label>
           <Input
             type="url"
@@ -283,7 +283,7 @@ export default function FormData({ onAddProduct }) {
             value={formData.image}
             onChange={handleChange}
             placeholder="https://example.com/image.jpg"
-            className="h-14 px-5 text-base font-medium border-2 border-gray-200 rounded-2xl focus:ring-4 focus:ring-blue-500/20 focus:border-blue-500 transition-all duration-300 hover:border-gray-300 hover:shadow-lg bg-white"
+            className="h-14 px-5 text-base font-medium border-2 border-gray-200 dark:border-gray-600 rounded-2xl focus:ring-4 focus:ring-blue-500/20 dark:focus:ring-blue-900 focus:border-blue-500 transition-all duration-300 hover:border-gray-300 dark:hover:border-gray-500 hover:shadow-lg bg-white dark:bg-gray-700 dark:text-gray-100"
           />
         </div>
 

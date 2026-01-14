@@ -30,7 +30,7 @@ export default function DataTable({ products = [], onDelete, onAddProduct }) {
   };
 
   return (
-    <div className="bg-white rounded-2xl shadow-xl overflow-hidden border border-gray-100">
+    <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl overflow-hidden border border-gray-100 dark:border-gray-700">
       {/* HEADER */}
       <div className="bg-gradient-to-r from-blue-600 to-blue-700 p-6 border-b border-blue-800">
         <div className="flex items-center justify-between">
@@ -85,23 +85,23 @@ export default function DataTable({ products = [], onDelete, onAddProduct }) {
                       alt={product.name}
                       className="w-12 h-12 rounded-xl object-cover"
                     />
-                    <span className="font-semibold">{product.name}</span>
+                    <span className="font-semibold dark:text-white">{product.name}</span>
                   </div>
                 </TableCell>
 
-                <TableCell>{product.category}</TableCell>
+                <TableCell className="dark:text-white">{product.category}</TableCell>
 
-                <TableCell className="text-sm text-gray-600 line-clamp-2">
+                <TableCell className="text-sm text-gray-600 dark:text-gray-300 line-clamp-2">
                   {product.description}
                 </TableCell>
 
-                <TableCell className="font-bold">
+                <TableCell className="font-bold dark:text-white">
                   {formatPrice(product.price)}
                 </TableCell>
 
-                <TableCell>{product.stock} unit</TableCell>
+                <TableCell className="dark:text-white">{product.stock} unit</TableCell>
 
-                <TableCell>{product.sold || 0} unit</TableCell>
+                <TableCell className="dark:text-white">{product.sold || 0} unit</TableCell>
 
                 <TableCell>
                   <div className="flex gap-2">
@@ -151,7 +151,7 @@ export default function DataTable({ products = [], onDelete, onAddProduct }) {
       </div>
 
       {products.length === 0 && (
-        <div className="text-center py-10 text-gray-500">Data Kosong</div>
+        <div className="text-center py-10 text-gray-500 dark:text-gray-400">Data Kosong</div>
       )}
     </div>
   );

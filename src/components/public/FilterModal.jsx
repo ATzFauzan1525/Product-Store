@@ -45,13 +45,13 @@ export default function FilterModal({
 
   return (
     <div className="fixed inset-0 bg-black/50 z-50 flex items-end md:items-center justify-center">
-      <div className="bg-white rounded-t-3xl md:rounded-2xl w-full md:w-96 max-h-[90vh] md:max-h-[80vh] overflow-y-auto shadow-2xl animation-slideUp">
+      <div className="bg-white dark:bg-gray-800 rounded-t-3xl md:rounded-2xl w-full md:w-96 max-h-[90vh] md:max-h-[80vh] overflow-y-auto shadow-2xl animation-slideUp">
         {/* Header */}
-        <div className="sticky top-0 bg-white border-b border-gray-200 p-6 flex items-center justify-between rounded-t-3xl md:rounded-t-2xl">
-          <h2 className="text-xl font-bold text-gray-900">Filter Produk</h2>
+        <div className="sticky top-0 bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 p-6 flex items-center justify-between rounded-t-3xl md:rounded-t-2xl">
+          <h2 className="text-xl font-bold text-gray-900 dark:text-white">Filter Produk</h2>
           <button
             onClick={onClose}
-            className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+            className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
           >
             <X className="w-5 h-5" />
           </button>
@@ -63,7 +63,7 @@ export default function FilterModal({
           <div>
             <button
               onClick={() => toggleSection("category")}
-              className="w-full flex items-center justify-between mb-4 font-semibold text-gray-900"
+              className="w-full flex items-center justify-between mb-4 font-semibold text-gray-900 dark:text-white"
             >
               <span>Kategori</span>
               {expandedSections.category ? (
@@ -86,9 +86,9 @@ export default function FilterModal({
                       value={category}
                       checked={localCategory === category}
                       onChange={(e) => setLocalCategory(e.target.value)}
-                      className="w-4 h-4 accent-blue-600"
+                      className="w-4 h-4 accent-blue-600 dark:accent-blue-400"
                     />
-                    <span className="text-gray-700 group-hover:text-blue-600 transition-colors capitalize">
+                    <span className="text-gray-700 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors capitalize">
                       {category === "all" ? "Semua Kategori" : category}
                     </span>
                   </label>
@@ -101,7 +101,7 @@ export default function FilterModal({
           <div>
             <button
               onClick={() => toggleSection("price")}
-              className="w-full flex items-center justify-between mb-4 font-semibold text-gray-900"
+              className="w-full flex items-center justify-between mb-4 font-semibold text-gray-900 dark:text-white"
             >
               <span>Harga</span>
               {expandedSections.price ? (
@@ -114,7 +114,7 @@ export default function FilterModal({
             {expandedSections.price && (
               <div className="space-y-4 ml-2">
                 <div>
-                  <label className="text-sm text-gray-600 mb-2 block">
+                  <label className="text-sm text-gray-600 dark:text-white mb-2 block">
                     Harga Minimum (Rp)
                   </label>
                   <input
@@ -129,13 +129,13 @@ export default function FilterModal({
                         setLocalPriceRange([newMin, localPriceRange[1]]);
                       }
                     }}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 focus:border-blue-500 dark:focus:border-blue-400 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                     placeholder="0"
                   />
                 </div>
 
                 <div>
-                  <label className="text-sm text-gray-600 mb-2 block">
+                  <label className="text-sm text-gray-600 dark:text-white mb-2 block">
                     Harga Maksimum (Rp)
                   </label>
                   <input
@@ -150,7 +150,7 @@ export default function FilterModal({
                         setLocalPriceRange([localPriceRange[0], newMax]);
                       }
                     }}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 focus:border-blue-500 dark:focus:border-blue-400 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                     placeholder="50000000"
                   />
                 </div>
@@ -160,16 +160,16 @@ export default function FilterModal({
         </div>
 
         {/* Footer */}
-        <div className="sticky bottom-0 bg-white border-t border-gray-200 p-6 space-y-3">
+        <div className="sticky bottom-0 bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700 p-6 space-y-3">
           <button
             onClick={handleApply}
-            className="w-full bg-blue-600 text-white font-semibold py-3 rounded-lg hover:bg-blue-700 transition-colors"
+            className="w-full bg-blue-600 dark:bg-blue-700 text-white font-semibold py-3 rounded-lg hover:bg-blue-700 dark:hover:bg-blue-600 transition-colors"
           >
             Terapkan Filter
           </button>
           <button
             onClick={handleReset}
-            className="w-full bg-gray-200 text-gray-900 font-semibold py-3 rounded-lg hover:bg-gray-300 transition-colors"
+            className="w-full bg-gray-200 dark:bg-gray-700 text-gray-900 dark:text-white font-semibold py-3 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors"
           >
             Reset Filter
           </button>

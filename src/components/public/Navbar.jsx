@@ -1,5 +1,6 @@
 import { Link, NavLink } from "react-router-dom";
-import { Search, ShoppingCart } from "lucide-react";
+import { Search, ShoppingCart, Moon, Sun } from "lucide-react";
+import { useDarkMode } from "../../hooks/useDarkMode";
 
 export default function Navbar({
   searchQuery,
@@ -7,13 +8,14 @@ export default function Navbar({
   cart = [],
   onCartClick,
 }) {
+  const { isDarkMode, toggleDarkMode } = useDarkMode();
   const cartItemCount = cart.reduce((total, item) => total + item.quantity, 0);
   return (
     <nav className="sticky top-0 z-50">
       {/* Soft Blue Glow */}
-      <div className="absolute inset-0 bg-gradient-to-r from-blue-400/20 via-sky-400/20 to-cyan-400/20 blur-2xl opacity-60"></div>
+      <div className="absolute inset-0 bg-gradient-to-r from-blue-400/20 via-sky-400/20 to-cyan-400/20 blur-2xl opacity-60 dark:from-blue-600/20 dark:via-sky-600/20 dark:to-cyan-600/20"></div>
 
-      <div className="relative bg-white/80 backdrop-blur-xl border-b border-blue-100 shadow-lg">
+      <div className="relative bg-white/80 dark:bg-gray-900/80 backdrop-blur-xl border-b border-blue-100 dark:border-gray-700 shadow-lg">
         <div className="max-w-7xl mx-auto px-6">
           <div className="flex h-16 items-center justify-between">
             {/* LOGO */}
@@ -22,7 +24,7 @@ export default function Navbar({
               className="flex items-center gap-3 text-xl font-extrabold tracking-tight"
             >
               <span className="text-3xl">🛒</span>
-              <span className="bg-gradient-to-r from-blue-600 via-sky-500 to-cyan-500 bg-clip-text text-transparent">
+              <span className="bg-gradient-to-r from-blue-600 via-sky-500 to-cyan-500 bg-clip-text text-transparent dark:from-blue-400 dark:via-sky-400 dark:to-cyan-400">
                 ProductStore
               </span>
             </Link>
@@ -31,13 +33,13 @@ export default function Navbar({
             {onSearch && (
               <div className="flex-1 max-w-md mx-8">
                 <div className="relative">
-                  <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+                  <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400 dark:text-gray-500" />
                   <input
                     type="text"
                     value={searchQuery}
                     onChange={(e) => onSearch(e.target.value)}
                     placeholder="Cari produk..."
-                    className="w-full pl-12 pr-4 py-2 rounded-xl border border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 outline-none transition-all"
+                    className="w-full pl-12 pr-4 py-2 rounded-xl border border-gray-200 dark:border-gray-600 focus:border-blue-500 dark:focus:border-blue-400 focus:ring-2 focus:ring-blue-500/20 dark:focus:ring-blue-400/20 outline-none transition-all bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100"
                   />
                 </div>
               </div>
@@ -51,12 +53,12 @@ export default function Navbar({
                   `relative transition-all duration-300
                   ${
                     isActive
-                      ? "text-blue-700"
-                      : "text-slate-500 hover:text-blue-600"
+                      ? "text-blue-700 dark:text-blue-400"
+                      : "text-slate-500 dark:text-slate-400 hover:text-blue-600 dark:hover:text-blue-400"
                   }
                   after:absolute after:left-1/2 after:-bottom-2 after:h-1 after:w-0
                   after:-translate-x-1/2 after:rounded-full
-                  after:bg-gradient-to-r after:from-blue-500 after:to-cyan-400
+                  after:bg-gradient-to-r after:from-blue-500 after:to-cyan-400 dark:after:from-blue-400 dark:after:to-cyan-400
                   after:transition-all after:duration-300
                   ${isActive ? "after:w-8" : "hover:after:w-8"}
                   `
@@ -65,11 +67,19 @@ export default function Navbar({
                 Katalog
               </NavLink>
 
+              {/* Dark Mode Toggle */}
+              <button
+                onClick={toggleDarkMode}
+                className="p-2 text-slate-500 dark:text-slate-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
+              >
+                {isDarkMode ? <Sun className="w-6 h-6" /> : <Moon className="w-6 h-6" />}
+              </button>
+
               {/* Cart Icon */}
               <div className="relative">
                 <button
                   onClick={onCartClick}
-                  className="relative p-2 text-slate-500 hover:text-blue-600 transition-colors"
+                  className="relative p-2 text-slate-500 dark:text-slate-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
                 >
                   <ShoppingCart className="w-6 h-6" />
                   {cartItemCount > 0 && (
