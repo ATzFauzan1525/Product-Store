@@ -74,7 +74,7 @@ export default function CartModal({
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
+      <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto dark:bg-gray-900 dark:border-gray-700">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2 text-xl font-bold">
             <ShoppingCart className="w-6 h-6" />
@@ -84,11 +84,11 @@ export default function CartModal({
 
         {cart.length === 0 ? (
           <div className="text-center py-12">
-            <ShoppingCart className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-            <h3 className="text-lg font-semibold text-gray-600 mb-2">
+            <ShoppingCart className="w-16 h-16 text-gray-300 dark:text-gray-600 mx-auto mb-4" />
+            <h3 className="text-lg font-semibold text-gray-600 dark:text-gray-300 mb-2">
               Keranjang Kosong
             </h3>
-            <p className="text-gray-500">
+            <p className="text-gray-500 dark:text-gray-400">
               Tambahkan produk ke keranjang untuk melihatnya di sini
             </p>
           </div>
@@ -109,11 +109,11 @@ export default function CartModal({
                       onToggleSelect([]);
                     }
                   }}
-                  className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500"
+                  className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600"
                 />
-                <span className="text-sm font-medium">Pilih Semua</span>
+                <span className="text-sm font-medium dark:text-white">Pilih Semua</span>
               </div>
-              <span className="text-sm text-gray-600">
+              <span className="text-sm text-gray-600 dark:text-gray-300">
                 {selectedItems.length} dari {cart.length} produk dipilih
               </span>
             </div>
@@ -122,13 +122,13 @@ export default function CartModal({
               {cart.map((item) => (
                 <div
                   key={item.id}
-                  className="flex items-center gap-4 p-4 border border-gray-200 rounded-lg"
+                  className="flex items-center gap-4 p-4 border border-gray-200 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800"
                 >
                   <input
                     type="checkbox"
                     checked={selectedItems.includes(item.id)}
                     onChange={() => onToggleSelect(item.id)}
-                    className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 mt-1"
+                    className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 mt-1"
                   />
 
                   <img
@@ -138,9 +138,9 @@ export default function CartModal({
                   />
 
                   <div className="flex-1">
-                    <h4 className="font-semibold text-gray-900">{item.name}</h4>
-                    <p className="text-sm text-gray-600">{item.category}</p>
-                    <p className="text-sm font-medium text-blue-600">
+                    <h4 className="font-semibold text-gray-900 dark:text-white">{item.name}</h4>
+                    <p className="text-sm text-gray-600 dark:text-gray-400">{item.category}</p>
+                    <p className="text-sm font-medium text-blue-600 dark:text-blue-400">
                       {formatPrice(item.price)}
                     </p>
                   </div>
@@ -150,13 +150,13 @@ export default function CartModal({
                       onClick={() =>
                         onUpdateQuantity(item.id, item.quantity - 1)
                       }
-                      className="p-1 rounded-full hover:bg-gray-100 transition-colors"
+                      className="p-1 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors text-gray-700 dark:text-gray-300"
                       disabled={item.quantity <= 1}
                     >
                       <Minus className="w-4 h-4" />
                     </button>
 
-                    <span className="w-8 text-center font-semibold">
+                    <span className="w-8 text-center font-semibold dark:text-white">
                       {item.quantity}
                     </span>
 
@@ -164,21 +164,21 @@ export default function CartModal({
                       onClick={() =>
                         onUpdateQuantity(item.id, item.quantity + 1)
                       }
-                      className="p-1 rounded-full hover:bg-gray-100 transition-colors"
+                      className="p-1 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors text-gray-700 dark:text-gray-300"
                     >
                       <Plus className="w-4 h-4" />
                     </button>
                   </div>
 
                   <div className="text-right">
-                    <p className="font-semibold text-gray-900">
+                    <p className="font-semibold text-gray-900 dark:text-white">
                       {formatPrice(item.price * item.quantity)}
                     </p>
                   </div>
 
                   <button
                     onClick={() => onRemoveItem(item.id)}
-                    className="p-2 text-red-500 hover:bg-red-50 rounded-full transition-colors"
+                    className="p-2 text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-full transition-colors"
                   >
                     <X className="w-4 h-4" />
                   </button>
@@ -186,24 +186,24 @@ export default function CartModal({
               ))}
             </div>
 
-            <div className="border-t border-gray-200 pt-4 mt-6">
+            <div className="border-t border-gray-200 dark:border-gray-700 pt-4 mt-6">
               <div className="flex justify-between items-center text-lg font-bold">
-                <span>Total:</span>
-                <span className="text-blue-600">{formatPrice(totalPrice)}</span>
+                <span className="dark:text-white">Total:</span>
+                <span className="text-blue-600 dark:text-blue-400">{formatPrice(totalPrice)}</span>
               </div>
 
               <div className="flex gap-3 mt-4">
                 <Button
                   onClick={onClose}
                   variant="outline"
-                  className="flex-1"
+                  className="flex-1 dark:border-gray-600 dark:text-white dark:hover:bg-gray-800"
                   disabled={isProcessingCheckout}
                 >
                   Lanjut Belanja
                 </Button>
                 <Button
                   onClick={handleCheckout}
-                  className="flex-1 bg-green-600 hover:bg-green-700 disabled:bg-gray-400"
+                  className="flex-1 bg-green-600 hover:bg-green-700 disabled:bg-gray-400 dark:text-white"
                   disabled={
                     isProcessingCheckout || selectedCartItems.length === 0
                   }
