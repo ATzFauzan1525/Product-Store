@@ -104,7 +104,7 @@ export default function ProductCard({
               e.stopPropagation();
               handleViewDetails(product);
             }}
-            className="bg-white/90 backdrop-blur-sm text-gray-900 px-4 py-2 rounded-full font-semibold flex items-center gap-2 shadow-lg hover:bg-white transition-all transform hover:scale-105"
+            className="bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm text-gray-900 dark:text-white px-4 py-2 rounded-full font-semibold flex items-center gap-2 shadow-lg hover:bg-white dark:hover:bg-gray-800 transition-all transform hover:scale-105"
           >
             <Eye className="w-4 h-4" />
             Lihat Detail
@@ -115,10 +115,10 @@ export default function ProductCard({
         <div className="absolute top-4 left-4">
           <Badge
             variant="secondary"
-            className="flex items-center gap-1.5 bg-white/95 backdrop-blur-sm shadow-lg"
+            className="flex items-center gap-1.5 bg-white/95 dark:bg-gray-800/95 backdrop-blur-sm shadow-lg"
           >
-            <Tag className="w-3.5 h-3.5 text-blue-600" />
-            <span className="text-xs font-semibold text-gray-700">
+            <Tag className="w-3.5 h-3.5 text-blue-600 dark:text-blue-400" />
+            <span className="text-xs font-semibold text-gray-700 dark:text-gray-300">
               {product.category}
             </span>
           </Badge>
@@ -137,10 +137,10 @@ export default function ProductCard({
           <div className="absolute top-4 right-4">
             <Badge
               variant="secondary"
-              className="flex items-center gap-1.5 bg-white/95 backdrop-blur-sm shadow-lg"
+              className="flex items-center gap-1.5 bg-white/95 dark:bg-gray-800/95 backdrop-blur-sm shadow-lg"
             >
-              <Package className="w-3.5 h-3.5 text-green-600" />
-              <span className="text-xs font-semibold text-gray-700">
+              <Package className="w-3.5 h-3.5 text-green-600 dark:text-green-400" />
+              <span className="text-xs font-semibold text-gray-700 dark:text-gray-300">
                 {product.stock}
               </span>
             </Badge>
@@ -151,7 +151,7 @@ export default function ProductCard({
       {/* Content */}
       <div className={`${viewMode === "list" ? "flex-1 p-6" : "p-6"}`}>
         <h3
-          className="text-xl font-bold text-gray-900 mb-3 line-clamp-2 group-hover:text-blue-600 transition-colors cursor-pointer"
+          className="text-xl font-bold text-gray-900 dark:text-white mb-3 line-clamp-2 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors cursor-pointer"
           onClick={() => handleViewDetails(product)}
         >
           {product.name}
@@ -160,11 +160,11 @@ export default function ProductCard({
         {/* Price Section */}
         <div className="mb-5">
           <div className="flex items-baseline gap-2">
-            <span className="text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-600">
+            <span className="text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-600 dark:from-blue-400 dark:to-indigo-400">
               {formatPrice(product.price)}
             </span>
           </div>
-          <p className="text-sm text-gray-500 mt-1">Harga terbaik untuk Anda</p>
+          <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">Harga terbaik untuk Anda</p>
         </div>
 
         {/* Action Buttons */}

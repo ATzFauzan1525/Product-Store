@@ -67,12 +67,12 @@ export default function AdminPage() {
   // Show loading state
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-100">
+      <div className="min-h-screen bg-gray-100 dark:bg-gray-900">
         <Navbar />
         <div className="container mx-auto px-4 py-8 flex items-center justify-center">
           <div className="text-center">
-            <div className="animate-spin rounded-full h-16 w-16 border-4 border-blue-600 border-t-transparent mx-auto mb-4"></div>
-            <p className="text-gray-600 font-medium">Loading...</p>
+            <div className="animate-spin rounded-full h-16 w-16 border-4 border-blue-600 dark:border-blue-400 border-t-transparent mx-auto mb-4"></div>
+            <p className="text-gray-600 dark:text-gray-300 font-medium">Loading...</p>
           </div>
         </div>
       </div>
@@ -82,17 +82,17 @@ export default function AdminPage() {
   // Show error state
   if (error) {
     return (
-      <div className="min-h-screen bg-gray-100">
+      <div className="min-h-screen bg-gray-100 dark:bg-gray-900">
         <Navbar />
         <div className="container mx-auto px-4 py-8">
-          <div className="bg-red-50 border border-red-200 rounded-lg p-6 mb-6">
-            <h3 className="text-red-800 font-semibold mb-2">
+          <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-6 mb-6">
+            <h3 className="text-red-800 dark:text-red-400 font-semibold mb-2">
               Terjadi Kesalahan
             </h3>
-            <p className="text-red-600 mb-4">{error}</p>
+            <p className="text-red-600 dark:text-red-300 mb-4">{error}</p>
             <button
               onClick={refreshProducts}
-              className="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition-colors"
+              className="bg-red-600 dark:bg-red-700 text-white px-4 py-2 rounded-lg hover:bg-red-700 dark:hover:bg-red-600 transition-colors"
             >
               Coba Lagi
             </button>
@@ -104,7 +104,7 @@ export default function AdminPage() {
 
   return (
     // CONTAINER HALAMAN dengan background abu-abu
-    <div className="min-h-screen bg-gray-100">
+    <div className="min-h-screen bg-gray-100 dark:bg-gray-900">
       {/* NAVBAR - menu navigasi di atas */}
       <Navbar />
 

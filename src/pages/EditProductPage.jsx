@@ -121,7 +121,7 @@ export default function EditProductPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50">
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 dark:bg-gradient-to-br dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
         <Navbar />
         <div className="container mx-auto px-4 py-16 flex items-center justify-center min-h-[80vh]">
           <div className="text-center">
@@ -143,7 +143,7 @@ export default function EditProductPage() {
 
   if (error) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50">
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 dark:bg-gradient-to-br dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
         <Navbar />
         <div className="container mx-auto px-4 py-16">
           <div className="max-w-2xl mx-auto">
@@ -185,7 +185,7 @@ export default function EditProductPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 dark:bg-gradient-to-br dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
       <Navbar />
 
       <div className="container mx-auto px-4 py-10 max-w-6xl">
@@ -224,12 +224,12 @@ export default function EditProductPage() {
         </div>
 
         {/* Main Form Card */}
-        <div className="bg-white rounded-3xl shadow-2xl border border-gray-100 overflow-hidden">
+        <div className="bg-white dark:bg-gray-800 rounded-3xl shadow-2xl border border-gray-100 dark:border-gray-700 overflow-hidden">
           <form onSubmit={handleSubmit} className="p-10">
             <div className="space-y-8">
               {/* ID Produk */}
               <div className="group">
-                <label className="flex items-center gap-2 text-sm font-bold text-gray-700 mb-3">
+                <label className="flex items-center gap-2 text-sm font-bold text-gray-700 dark:text-gray-200 mb-3">
                   <span className="w-2 h-2 bg-blue-500 rounded-full"></span>
                   ID Produk
                 </label>
@@ -238,9 +238,9 @@ export default function EditProductPage() {
                     type="text"
                     value={id}
                     readOnly
-                    className="w-full px-5 py-4 border-2 border-gray-200 rounded-xl bg-gradient-to-r from-gray-50 to-gray-100 text-gray-500 cursor-not-allowed font-semibold text-lg"
+                    className="w-full px-5 py-4 border-2 border-gray-200 rounded-xl bg-gradient-to-r from-gray-50 to-gray-100 dark:from-gray-700 dark:to-gray-800 text-gray-500 cursor-not-allowed font-semibold text-lg"
                   />
-                  <div className="absolute right-4 top-1/2 -translate-y-1/2 px-3 py-1 bg-gray-200 text-gray-600 text-xs font-bold rounded-full">
+                  <div className="absolute right-4 top-1/2 -translate-y-1/2 px-3 py-1 bg-gray-200 dark:bg-gray-600 text-gray-600 dark:text-gray-300 text-xs font-bold rounded-full">
                     READ ONLY
                   </div>
                 </div>
@@ -248,7 +248,7 @@ export default function EditProductPage() {
 
               {/* Nama Produk */}
               <div className="group">
-                <label className="flex items-center gap-2 text-sm font-bold text-gray-700 mb-3">
+                <label className="flex items-center gap-2 text-sm font-bold text-gray-700 dark:text-gray-200 mb-3">
                   <span className="w-2 h-2 bg-blue-500 rounded-full"></span>
                   Nama Produk
                 </label>
@@ -260,7 +260,7 @@ export default function EditProductPage() {
                     value={formData.name}
                     onChange={handleChange}
                     required
-                    className="w-full pl-12 pr-5 py-4 border-2 border-gray-200 rounded-xl focus:border-blue-500 focus:ring-4 focus:ring-blue-100 transition-all text-gray-800 font-medium placeholder:text-gray-400"
+                    className="w-full pl-12 pr-5 py-4 border-2 border-gray-200 rounded-xl focus:border-blue-500 focus:ring-4 focus:ring-blue-100 dark:focus:ring-blue-900 transition-all text-gray-800 dark:text-gray-100 font-medium placeholder:text-gray-400 dark:placeholder:text-gray-500 bg-white dark:bg-gray-700"
                     placeholder="Contoh: iPhone 15 Pro Max"
                   />
                 </div>
@@ -270,13 +270,13 @@ export default function EditProductPage() {
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                 {/* Harga */}
                 <div className="group">
-                  <label className="flex items-center gap-2 text-sm font-bold text-gray-700 mb-3">
+                  <label className="flex items-center gap-2 text-sm font-bold text-gray-700 dark:text-gray-200 mb-3">
                     <span className="w-2 h-2 bg-green-500 rounded-full"></span>
                     Harga Produk
                   </label>
                   <div className="relative">
                     <DollarSign className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-green-500" />
-                    <span className="absolute left-11 top-1/2 -translate-y-1/2 text-gray-600 font-bold">
+                    <span className="absolute left-11 top-1/2 -translate-y-1/2 text-gray-600 dark:text-gray-400 font-bold">
                       Rp
                     </span>
                     <input
@@ -286,7 +286,7 @@ export default function EditProductPage() {
                       onChange={handleChange}
                       required
                       min="0"
-                      className="w-full pl-20 pr-5 py-4 border-2 border-gray-200 rounded-xl focus:border-green-500 focus:ring-4 focus:ring-green-100 transition-all text-gray-800 font-semibold placeholder:text-gray-400"
+                      className="w-full pl-20 pr-5 py-4 border-2 border-gray-200 rounded-xl focus:border-green-500 focus:ring-4 focus:ring-green-100 dark:focus:ring-green-900 transition-all text-gray-800 dark:text-gray-100 font-semibold placeholder:text-gray-400 dark:placeholder:text-gray-500 bg-white dark:bg-gray-700"
                       placeholder="500000"
                     />
                   </div>
@@ -294,7 +294,7 @@ export default function EditProductPage() {
 
                 {/* Stok */}
                 <div className="group">
-                  <label className="flex items-center gap-2 text-sm font-bold text-gray-700 mb-3">
+                  <label className="flex items-center gap-2 text-sm font-bold text-gray-700 dark:text-gray-200 mb-3">
                     <span className="w-2 h-2 bg-purple-500 rounded-full"></span>
                     Jumlah Stok
                   </label>
@@ -307,10 +307,10 @@ export default function EditProductPage() {
                       onChange={handleChange}
                       required
                       min="0"
-                      className="w-full pl-12 pr-20 py-4 border-2 border-gray-200 rounded-xl focus:border-purple-500 focus:ring-4 focus:ring-purple-100 transition-all text-gray-800 font-semibold placeholder:text-gray-400"
+                      className="w-full pl-12 pr-20 py-4 border-2 border-gray-200 rounded-xl focus:border-purple-500 focus:ring-4 focus:ring-purple-100 dark:focus:ring-purple-900 transition-all text-gray-800 dark:text-gray-100 font-semibold placeholder:text-gray-400 dark:placeholder:text-gray-500 bg-white dark:bg-gray-700"
                       placeholder="100"
                     />
-                    <div className="absolute right-4 top-1/2 -translate-y-1/2 px-3 py-1 bg-purple-100 text-purple-700 text-sm font-bold rounded-lg">
+                    <div className="absolute right-4 top-1/2 -translate-y-1/2 px-3 py-1 bg-purple-100 dark:bg-purple-900 text-purple-700 dark:text-purple-300 text-sm font-bold rounded-lg">
                       UNIT
                     </div>
                   </div>
@@ -319,7 +319,7 @@ export default function EditProductPage() {
 
               {/* Kategori */}
               <div className="group">
-                <label className="flex items-center gap-2 text-sm font-bold text-gray-700 mb-3">
+                <label className="flex items-center gap-2 text-sm font-bold text-gray-700 dark:text-gray-200 mb-3">
                   <span className="w-2 h-2 bg-orange-500 rounded-full"></span>
                   Kategori Produk
                 </label>
@@ -331,7 +331,7 @@ export default function EditProductPage() {
                     value={formData.category}
                     onChange={handleChange}
                     required
-                    className="w-full pl-12 pr-5 py-4 border-2 border-gray-200 rounded-xl focus:border-orange-500 focus:ring-4 focus:ring-orange-100 transition-all text-gray-800 font-medium placeholder:text-gray-400"
+                    className="w-full pl-12 pr-5 py-4 border-2 border-gray-200 rounded-xl focus:border-orange-500 focus:ring-4 focus:ring-orange-100 dark:focus:ring-orange-900 transition-all text-gray-800 dark:text-gray-100 font-medium placeholder:text-gray-400 dark:placeholder:text-gray-500 bg-white dark:bg-gray-700"
                     placeholder="Contoh: Elektronik, Fashion, Gadget"
                   />
                 </div>
@@ -339,7 +339,7 @@ export default function EditProductPage() {
 
               {/* Deskripsi */}
               <div className="group">
-                <label className="flex items-center gap-2 text-sm font-bold text-gray-700 mb-3">
+                <label className="flex items-center gap-2 text-sm font-bold text-gray-700 dark:text-gray-200 mb-3">
                   <span className="w-2 h-2 bg-indigo-500 rounded-full"></span>
                   Deskripsi Produk
                 </label>
@@ -348,19 +348,19 @@ export default function EditProductPage() {
                   value={formData.description}
                   onChange={handleChange}
                   rows="5"
-                  className="w-full px-5 py-4 border-2 border-gray-200 rounded-xl focus:border-indigo-500 focus:ring-4 focus:ring-indigo-100 transition-all text-gray-800 font-medium placeholder:text-gray-400 resize-none"
+                  className="w-full px-5 py-4 border-2 border-gray-200 rounded-xl focus:border-indigo-500 focus:ring-4 focus:ring-indigo-100 dark:focus:ring-indigo-900 transition-all text-gray-800 dark:text-gray-100 font-medium placeholder:text-gray-400 dark:placeholder:text-gray-500 resize-none bg-white dark:bg-gray-700"
                   placeholder="Ceritakan lebih detail tentang produk ini..."
                 />
               </div>
 
               {/* Status Ketersediaan */}
               <div className="group">
-                <label className="flex items-center gap-2 text-sm font-bold text-gray-700 mb-3">
+                <label className="flex items-center gap-2 text-sm font-bold text-gray-700 dark:text-gray-200 mb-3">
                   <span className="w-2 h-2 bg-emerald-500 rounded-full"></span>
                   Status Ketersediaan
                 </label>
                 <div
-                  className={`relative overflow-hidden rounded-2xl border-2 transition-all ${formData.isAvailable ? "border-emerald-200 bg-gradient-to-br from-emerald-50 to-green-50" : "border-gray-200 bg-gray-50"}`}
+                  className={`relative overflow-hidden rounded-2xl border-2 transition-all ${formData.isAvailable ? "border-emerald-200 bg-gradient-to-br from-emerald-50 to-green-50 dark:from-emerald-900/20 dark:to-green-900/20" : "border-gray-200 dark:border-gray-600 bg-gray-50 dark:bg-gray-700"}`}
                 >
                   <label className="flex items-start gap-4 p-6 cursor-pointer">
                     <div className="relative flex items-center">
@@ -369,12 +369,12 @@ export default function EditProductPage() {
                         name="isAvailable"
                         checked={formData.isAvailable}
                         onChange={handleChange}
-                        className="w-6 h-6 text-emerald-600 bg-white border-2 border-gray-300 rounded-lg focus:ring-4 focus:ring-emerald-200 cursor-pointer"
+                        className="w-6 h-6 text-emerald-600 bg-white dark:bg-gray-600 border-2 border-gray-300 rounded-lg focus:ring-4 focus:ring-emerald-200 cursor-pointer"
                       />
                     </div>
                     <div className="flex-1">
                       <div className="flex items-center gap-2 mb-2">
-                        <span className="text-gray-900 font-bold text-lg">
+                        <span className="text-gray-900 dark:text-gray-100 font-bold text-lg">
                           Produk Tersedia
                         </span>
                         {formData.isAvailable && (
@@ -383,7 +383,7 @@ export default function EditProductPage() {
                           </span>
                         )}
                       </div>
-                      <p className="text-gray-600 leading-relaxed">
+                      <p className="text-gray-600 dark:text-gray-400 leading-relaxed">
                         {formData.isAvailable
                           ? "✓ Produk akan ditampilkan di katalog dan dapat dibeli oleh pelanggan"
                           : "✗ Produk tidak akan ditampilkan dan stok otomatis menjadi 0"}
@@ -395,7 +395,7 @@ export default function EditProductPage() {
 
               {/* URL Gambar */}
               <div className="group">
-                <label className="flex items-center gap-2 text-sm font-bold text-gray-700 mb-3">
+                <label className="flex items-center gap-2 text-sm font-bold text-gray-700 dark:text-gray-200 mb-3">
                   <span className="w-2 h-2 bg-pink-500 rounded-full"></span>
                   URL Gambar Produk
                 </label>
@@ -406,11 +406,11 @@ export default function EditProductPage() {
                     name="image"
                     value={formData.image}
                     onChange={handleChange}
-                    className="w-full pl-12 pr-5 py-4 border-2 border-gray-200 rounded-xl focus:border-pink-500 focus:ring-4 focus:ring-pink-100 transition-all text-gray-800 font-medium placeholder:text-gray-400"
+                    className="w-full pl-12 pr-5 py-4 border-2 border-gray-200 rounded-xl focus:border-pink-500 focus:ring-4 focus:ring-pink-100 dark:focus:ring-pink-900 transition-all text-gray-800 dark:text-gray-100 font-medium placeholder:text-gray-400 dark:placeholder:text-gray-500 bg-white dark:bg-gray-700"
                     placeholder="https://example.com/gambar-produk.jpg"
                   />
                 </div>
-                <p className="text-xs text-gray-500 mt-2 ml-1">
+                <p className="text-xs text-gray-500 dark:text-gray-400 mt-2 ml-1">
                   Masukkan URL gambar produk dari internet
                 </p>
               </div>
@@ -418,13 +418,13 @@ export default function EditProductPage() {
               {/* Preview Gambar */}
               {formData.image && (
                 <div className="group">
-                  <label className="flex items-center gap-2 text-sm font-bold text-gray-700 mb-4">
+                  <label className="flex items-center gap-2 text-sm font-bold text-gray-700 dark:text-gray-200 mb-4">
                     <span className="w-2 h-2 bg-blue-500 rounded-full"></span>
                     Preview Gambar
                   </label>
                   <div className="inline-block relative">
                     <div className="absolute inset-0 bg-gradient-to-br from-blue-400 to-purple-400 rounded-2xl blur-xl opacity-20"></div>
-                    <div className="relative bg-white p-3 rounded-2xl border-2 border-gray-200 shadow-lg">
+                    <div className="relative bg-white dark:bg-gray-700 p-3 rounded-2xl border-2 border-gray-200 dark:border-gray-600 shadow-lg">
                       <img
                         src={formData.image}
                         alt="Preview"
@@ -441,7 +441,7 @@ export default function EditProductPage() {
             </div>
 
             {/* Action Buttons */}
-            <div className="flex flex-col sm:flex-row gap-4 mt-10 pt-8 border-t-2 border-gray-100">
+            <div className="flex flex-col sm:flex-row gap-4 mt-10 pt-8 border-t-2 border-gray-100 dark:border-gray-700">
               <button
                 type="submit"
                 disabled={isSubmitting}
@@ -462,7 +462,7 @@ export default function EditProductPage() {
               <button
                 type="button"
                 onClick={() => navigate("/admin")}
-                className="flex-1 bg-white text-gray-700 py-4 rounded-xl font-bold text-lg hover:bg-gray-100 transition-all border-2 border-gray-200 shadow-sm hover:shadow-lg transform hover:scale-105"
+                className="flex-1 bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-200 py-4 rounded-xl font-bold text-lg hover:bg-gray-100 dark:hover:bg-gray-600 transition-all border-2 border-gray-200 dark:border-gray-600 shadow-sm hover:shadow-lg transform hover:scale-105"
               >
                 Batal
               </button>

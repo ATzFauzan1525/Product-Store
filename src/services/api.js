@@ -11,10 +11,10 @@ class ApiError extends Error {
 // Generate unique Order ID
 export const generateOrderId = () => {
   const timestamp = Date.now().toString().slice(-6); // 6 digit dari timestamp
-  const random = Math.floor(Math.random() * 10000)
-    .toString()
-    .padStart(4, "0"); // 4 digit random
-  return `${timestamp}${random}`; // Total 10 digit
+   const random = Math.floor(Math.random() * 10000)
+     .toString()
+     .padStart(4, "0"); // 4 digit random
+   return `${timestamp}${random}`; // Total 10 digit
 };
 
 const fetchWithErrorHandling = async (url, options = {}) => {

@@ -18,12 +18,12 @@ export default function AddProductPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-100">
+    <div className="min-h-screen bg-gray-100 dark:bg-gray-900">
       <Navbar />
       <div className="container mx-auto px-4 py-8">
         <div className="mb-6">
-          <h1 className="text-3xl font-bold">Tambah Produk</h1>
-          <p className="text-sm text-gray-600">
+          <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Tambah Produk</h1>
+          <p className="text-sm text-gray-600 dark:text-gray-300">
             Isi formulir untuk menambahkan produk baru.
           </p>
         </div>

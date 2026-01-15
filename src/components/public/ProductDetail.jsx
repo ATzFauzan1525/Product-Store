@@ -132,10 +132,10 @@ Total: ${formatPrice(product.price * quantity)}`;
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 flex items-center justify-center">
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 dark:bg-gradient-to-br dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-16 w-16 border-4 border-blue-600 border-t-transparent mx-auto mb-4"></div>
-          <p className="text-gray-600 font-medium">Memuat detail produk...</p>
+          <p className="text-gray-600 dark:text-gray-400 font-medium">Memuat detail produk...</p>
         </div>
       </div>
     );
@@ -143,15 +143,15 @@ Total: ${formatPrice(product.price * quantity)}`;
 
   if (error || !product) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 flex items-center justify-center">
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 dark:bg-gradient-to-br dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 flex items-center justify-center">
         <div className="text-center">
-          <div className="w-20 h-20 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
+          <div className="w-20 h-20 bg-red-100 dark:bg-red-900/20 rounded-full flex items-center justify-center mx-auto mb-4">
             <Package className="w-10 h-10 text-red-600" />
           </div>
-          <h2 className="text-2xl font-bold text-gray-900 mb-2">
+          <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
             Produk tidak ditemukan
           </h2>
-          <p className="text-gray-600 mb-6">
+          <p className="text-gray-600 dark:text-gray-400 mb-6">
             {error || "Produk yang Anda cari tidak tersedia"}
           </p>
           <button
@@ -166,17 +166,17 @@ Total: ${formatPrice(product.price * quantity)}`;
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50">
-      <div className="bg-white shadow-sm border-b">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 dark:bg-gradient-to-br dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
+      <div className="bg-white dark:bg-gray-800 shadow-sm border-b dark:border-gray-700">
         <div className="container mx-auto px-4 py-4">
           <div className="flex items-center gap-4">
             <button
               onClick={() => navigate("/")}
-              className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+              className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
             >
               <ArrowLeft className="w-5 h-5" />
             </button>
-            <h1 className="text-lg font-semibold text-gray-900">
+            <h1 className="text-lg font-semibold text-gray-900 dark:text-white">
               Detail Produk
             </h1>
           </div>
@@ -186,7 +186,7 @@ Total: ${formatPrice(product.price * quantity)}`;
       <div className="container mx-auto px-4 py-8">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
           <div className="space-y-4">
-            <div className="aspect-square rounded-2xl overflow-hidden bg-white shadow-lg">
+            <div className="aspect-square rounded-2xl overflow-hidden bg-white dark:bg-gray-700 shadow-lg">
               <img
                 src={product.image}
                 alt={product.name}
@@ -198,7 +198,7 @@ Total: ${formatPrice(product.price * quantity)}`;
           <div className="space-y-6">
             <div>
               <div className="flex items-start justify-between mb-4">
-                <h1 className="text-3xl font-bold text-gray-900 leading-tight">
+                <h1 className="text-3xl font-bold text-gray-900 dark:text-white leading-tight">
                   {product.name}
                 </h1>
                 <div className="flex gap-2">
@@ -206,8 +206,8 @@ Total: ${formatPrice(product.price * quantity)}`;
                     onClick={() => setIsWishlisted(!isWishlisted)}
                     className={`p-3 rounded-xl transition-colors ${
                       isWishlisted
-                        ? "bg-red-100 text-red-600"
-                        : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+                        ? "bg-red-100 text-red-600 dark:bg-red-900 dark:text-red-400"
+                        : "bg-gray-100 text-gray-600 dark:bg-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600"
                     }`}
                   >
                     <Heart
@@ -216,7 +216,7 @@ Total: ${formatPrice(product.price * quantity)}`;
                   </button>
                   <button
                     onClick={handleShare}
-                    className="p-3 bg-gray-100 text-gray-600 rounded-xl hover:bg-gray-200 transition-colors"
+                    className="p-3 bg-gray-100 text-gray-600 dark:bg-gray-700 dark:text-gray-300 rounded-xl hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors"
                   >
                     <Share2 className="w-5 h-5" />
                   </button>
@@ -225,28 +225,28 @@ Total: ${formatPrice(product.price * quantity)}`;
 
               <div className="flex items-center gap-2 mb-4">
                 <Tag className="w-4 h-4 text-blue-600" />
-                <span className="px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-sm font-medium">
+                <span className="px-3 py-1 bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300 rounded-full text-sm font-medium">
                   {product.category}
                 </span>
               </div>
             </div>
 
-            <div className="bg-gradient-to-r from-blue-50 to-indigo-50 p-6 rounded-2xl">
+            <div className="bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-gray-800 dark:to-gray-700 p-6 rounded-2xl">
               <div className="flex items-baseline gap-3">
                 <span className="text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-600">
                   {formatPrice(product.price)}
                 </span>
               </div>
-              <p className="text-sm text-gray-600 mt-1">
+              <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
                 Harga terbaik untuk Anda
               </p>
             </div>
 
             <div
-              className={`bg-white p-4 rounded-xl border-2 ${
+              className={`bg-white dark:bg-gray-800 p-4 rounded-xl border-2 ${
                 Number(product.stock) <= 0
-                  ? "border-red-200 bg-red-50"
-                  : "border-gray-200 bg-white"
+                  ? "border-red-200 dark:border-red-700 bg-red-50 dark:bg-red-900/20"
+                  : "border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-800"
               }`}
             >
               <div className="flex items-center gap-3">
@@ -254,12 +254,12 @@ Total: ${formatPrice(product.price * quantity)}`;
                   className={`w-5 h-5 ${Number(product.stock) <= 0 ? "text-red-600" : "text-green-600"}`}
                 />
                 <div>
-                  <p className="font-semibold text-gray-900">
+                  <p className="font-semibold text-gray-900 dark:text-white">
                     {Number(product.stock) <= 0
                       ? "Stok Kosong"
                       : "Stok Tersedia"}
                   </p>
-                  <p className="text-sm text-gray-600">
+                  <p className="text-sm text-gray-600 dark:text-gray-400">
                     {Number(product.stock) <= 0
                       ? "Produk ini sedang tidak tersedia"
                       : `${product.stock} unit`}
@@ -270,44 +270,44 @@ Total: ${formatPrice(product.price * quantity)}`;
 
             {/* Deskripsi Produk */}
             {product.description && (
-              <div className="bg-white p-6 rounded-xl border border-gray-200">
-                <h3 className="font-bold text-gray-900 mb-3 text-lg">
+              <div className="bg-white dark:bg-gray-800 p-6 rounded-xl border border-gray-200 dark:border-gray-600">
+                <h3 className="font-bold text-gray-900 dark:text-white mb-3 text-lg">
                   Deskripsi Produk
                 </h3>
-                <p className="text-gray-700 leading-relaxed">
+                <p className="text-gray-700 dark:text-gray-300 leading-relaxed">
                   {product.description}
                 </p>
               </div>
             )}
 
             {Number(product.stock) > 0 && (
-              <div className="bg-white p-4 rounded-xl border border-gray-200">
-                <label className="block font-semibold text-gray-900 mb-3">
+              <div className="bg-white dark:bg-gray-800 p-4 rounded-xl border border-gray-200 dark:border-gray-600">
+                <label className="block font-semibold text-gray-900 dark:text-white mb-3">
                   Jumlah
                 </label>
                 <div className="flex items-center gap-4">
-                  <div className="flex items-center border border-gray-300 rounded-lg">
+                  <div className="flex items-center border border-gray-300 dark:border-gray-500 rounded-lg">
                     <button
                       onClick={() => setQuantity(Math.max(1, quantity - 1))}
-                      className="px-4 py-2 hover:bg-gray-50 transition-colors"
+                      className="px-4 py-2 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
                       disabled={quantity <= 1}
                     >
                       -
                     </button>
-                    <span className="px-6 py-2 font-semibold border-x border-gray-300">
+                    <span className="px-6 py-2 font-semibold border-x border-gray-300 dark:border-gray-500">
                       {quantity}
                     </span>
                     <button
                       onClick={() =>
                         setQuantity(Math.min(product.stock, quantity + 1))
                       }
-                      className="px-4 py-2 hover:bg-gray-50 transition-colors"
+                      className="px-4 py-2 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
                       disabled={quantity >= product.stock}
                     >
                       +
                     </button>
                   </div>
-                  <span className="text-sm text-gray-600">
+                  <span className="text-sm text-gray-600 dark:text-gray-400">
                     Maksimal {product.stock} unit
                   </span>
                 </div>
@@ -315,25 +315,25 @@ Total: ${formatPrice(product.price * quantity)}`;
             )}
 
             {Number(product.stock) <= 0 && (
-              <div className="bg-red-50 border-2 border-red-200 p-6 rounded-xl text-center">
+              <div className="bg-red-50 dark:bg-red-900/20 border-2 border-red-200 dark:border-red-700 p-6 rounded-xl text-center">
                 <Package className="w-10 h-10 text-red-600 mx-auto mb-3" />
-                <h3 className="text-lg font-bold text-red-700 mb-2">
+                <h3 className="text-lg font-bold text-red-700 dark:text-red-400 mb-2">
                   Produk Sedang Tidak Tersedia
                 </h3>
-                <p className="text-red-600 text-sm">
+                <p className="text-red-600 dark:text-red-400 text-sm">
                   Mohon kembali lagi nanti untuk melihat ketersediaan terbaru
                 </p>
               </div>
             )}
 
             <div
-              className="bg-gradient-to-r from-green-50 to-emerald-50 p-4 rounded-xl border border-green-200"
+              className="bg-gradient-to-r from-green-50 to-emerald-50 dark:from-gray-800 dark:to-gray-700 p-4 rounded-xl border border-green-200 dark:border-green-700"
               style={{
                 display: Number(product.stock) > 0 ? "block" : "none",
               }}
             >
               <div className="flex items-center justify-between">
-                <span className="font-semibold text-gray-900">Total:</span>
+                <span className="font-semibold text-gray-900 dark:text-white">Total:</span>
                 <span className="text-2xl font-bold text-green-600">
                   {formatPrice(product.price * quantity)}
                 </span>
@@ -359,7 +359,7 @@ Total: ${formatPrice(product.price * quantity)}`;
 
               <Link
                 to="/"
-                className="w-full bg-gray-100 text-gray-700 py-3 rounded-xl hover:bg-gray-200 transition-colors font-semibold text-center block"
+                className="w-full bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 py-3 rounded-xl hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors font-semibold text-center block"
               >
                 Kembali ke Katalog
               </Link>
@@ -384,26 +384,26 @@ Total: ${formatPrice(product.price * quantity)}`;
               isProcessing={isPendingConfirm}
             />
 
-            <div className="bg-white p-6 rounded-xl border border-gray-200">
-              <h3 className="font-bold text-gray-900 mb-4">
+            <div className="bg-white dark:bg-gray-800 p-6 rounded-xl border border-gray-200 dark:border-gray-600">
+              <h3 className="font-bold text-gray-900 dark:text-white mb-4">
                 Keunggulan Belanja
               </h3>
               <div className="space-y-3">
                 <div className="flex items-center gap-3">
                   <Truck className="w-5 h-5 text-blue-600" />
-                  <span className="text-sm text-gray-700">
+                  <span className="text-sm text-gray-700 dark:text-gray-300">
                     Pengiriman cepat dan aman
                   </span>
                 </div>
                 <div className="flex items-center gap-3">
                   <Shield className="w-5 h-5 text-green-600" />
-                  <span className="text-sm text-gray-700">
+                  <span className="text-sm text-gray-700 dark:text-gray-300">
                     Garansi produk resmi
                   </span>
                 </div>
                 <div className="flex items-center gap-3">
                   <Star className="w-5 h-5 text-yellow-500" />
-                  <span className="text-sm text-gray-700">
+                  <span className="text-sm text-gray-700 dark:text-gray-300">
                     Kualitas terjamin
                   </span>
                 </div>

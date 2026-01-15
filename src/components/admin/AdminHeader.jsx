@@ -9,12 +9,12 @@ export default function AdminHeader({
 }) {
   return (
     // Container utama header dengan gradient biru dan shadow besar
-    <div className="relative bg-gradient-to-br from-blue-800 via-blue-600 to-blue-400 text-white p-12 rounded-3xl shadow-2xl mb-12 overflow-hidden">
+    <div className="relative bg-gradient-to-br from-blue-800 via-blue-600 to-blue-400 dark:from-blue-900 dark:via-blue-800 dark:to-blue-600 text-white p-12 rounded-3xl shadow-2xl mb-12 overflow-hidden">
       {/* ELEMEN DEKORATIF - Lingkaran putih di pojok kanan atas untuk efek visual */}
-      <div className="absolute top-0 right-0 w-80 h-80 bg-white opacity-10 rounded-full -mr-40 -mt-40"></div>
+      <div className="absolute top-0 right-0 w-80 h-80 bg-white opacity-10 dark:opacity-5 rounded-full -mr-40 -mt-40"></div>
 
       {/* ELEMEN DEKORATIF - Lingkaran biru di pojok kiri bawah untuk efek visual */}
-      <div className="absolute bottom-0 left-0 w-64 h-64 bg-blue-300 opacity-20 rounded-full -ml-32 -mb-32"></div>
+      <div className="absolute bottom-0 left-0 w-64 h-64 bg-blue-300 dark:bg-blue-500 opacity-20 rounded-full -ml-32 -mb-32"></div>
 
       {/* KONTEN UTAMA - z-10 agar muncul di atas elemen dekoratif */}
       <div className="relative z-10">
