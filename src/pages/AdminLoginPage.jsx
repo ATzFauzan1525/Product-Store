@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Shield, Mail, Lock, AlertCircle } from "lucide-react";
 import { loginAdmin } from "../services/api";
@@ -11,6 +11,14 @@ export default function AdminLoginPage() {
   });
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+
+  // Check if already logged in - redirect to admin
+  useEffect(() => {
+    const token = sessionStorage.getItem("adminToken");
+    if (token) {
+      navigate("/admin", { replace: true });
+    }
+  }, [navigate]);
 
   const handleChange = (e) => {
     setFormData({
